@@ -1,0 +1,78 @@
+{
+  "name": "Danske Attraktioner · Stampbog",
+  "short_name": "Attraktioner",
+  "description": "Besøg danske attraktioner og markér dem som besøgt med geo-låsning via fotografie",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A2F51",
+  "theme_color": "#0A2F51",
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230A2F51' width='192' height='192'/><text x='96' y='96' font-size='120' fill='white' text-anchor='middle' dominant-baseline='central'>🗺️</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230A2F51' width='512' height='512'/><text x='256' y='256' font-size='320' fill='white' text-anchor='middle' dominant-baseline='central'>🗺️</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%234DADE5' width='192' height='192' rx='45'/><text x='96' y='96' font-size='120' fill='white' text-anchor='middle' dominant-baseline='central'>🗺️</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["travel", "navigation"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%230A2F51' width='540' height='720'/><text x='270' y='360' font-size='200' fill='%234DADE5' text-anchor='middle' dominant-baseline='central'>🗺️</text><text x='270' y='600' font-size='40' fill='white' text-anchor='middle'>Danske Attraktioner</text></svg>",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Alle Attraktioner",
+      "short_name": "Attraktioner",
+      "description": "Se alle danske attraktioner på kortet",
+      "url": "/?view=all",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%234DADE5' width='96' height='96' rx='20'/><text x='48' y='48' font-size='60' fill='white' text-anchor='middle' dominant-baseline='central'>🗺️</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Min Progress",
+      "short_name": "Status",
+      "description": "Se din besøgte attraktioner",
+      "url": "/?view=progress",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%233BD37F' width='96' height='96' rx='20'/><text x='48' y='48' font-size='60' fill='white' text-anchor='middle' dominant-baseline='central'>📊</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "application/json",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
