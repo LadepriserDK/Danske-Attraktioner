@@ -92,7 +92,29 @@ header {
 }
 
 @media (max-width: 768px) {
-  .sidebar { display: none; }
+  .container {
+    flex-direction: column;
+  }
+  #map {
+    flex: none;
+    height: 42vh;
+    min-height: 240px;
+  }
+  .sidebar {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--line);
+    flex: 1;
+    min-height: 0;
+  }
+  .region-tabs {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .region-tab {
+    padding: 8px 4px;
+    font-size: 11px;
+  }
 }
 
 .sidebar-header {
@@ -171,6 +193,27 @@ header {
   font-weight: 600;
   min-width: 40px;
   text-align: right;
+}
+
+.showall-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.showall-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
 }
 
 .sidebar-content {
@@ -383,9 +426,10 @@ header {
       </div>
       <div class="range-control">
         <label>Radius:</label>
-        <input type="range" id="radiusSlider" min="5" max="100" value="25" step="5" />
-        <output id="radiusOutput">25 km</output>
+        <input type="range" id="radiusSlider" min="5" max="100" value="50" step="5" />
+        <output id="radiusOutput">50 km</output>
       </div>
+      <button id="showAllBtn" class="showall-btn">🌍 Vis alle på kortet</button>
     </div>
 
     <div class="sidebar-content">
@@ -555,7 +599,8 @@ let map, currentAttractionId = null;
 let userLocation = [56.2639, 9.5018];
 let filteredAttractions = [...ATTRACTIONS];
 let selectedRegion = null;
-let radiusKm = 25;
+let radiusKm = 50;
+let showAll = false;
 
 window.addEventListener('DOMContentLoaded', () => {
   initMap();
@@ -588,18 +633,22 @@ function updateMap() {
     }
   });
 
-  L.circle(userLocation, {
-    radius: radiusKm * 1000,
-    color: '#4DADE5',
-    weight: 1,
-    opacity: 0.3,
-    fillOpacity: 0.05
-  }).addTo(map);
+  if (!showAll) {
+    L.circle(userLocation, {
+      radius: radiusKm * 1000,
+      color: '#4DADE5',
+      weight: 1,
+      opacity: 0.3,
+      fillOpacity: 0.05
+    }).addTo(map);
+  }
+
+  const shown = [];
 
   filteredAttractions.forEach(att => {
     const dist = haversine(userLocation[0], userLocation[1], att.lat, att.lng);
     
-    if (dist <= radiusKm) {
+    if (showAll || dist <= radiusKm) {
       const isVisited = localStorage.getItem(`visited_${att.id}`);
       const hasGeoPhoto = localStorage.getItem(`geo_locked_${att.id}`);
       
@@ -610,8 +659,14 @@ function updateMap() {
           iconAnchor: [20, 20]
         })
       }).addTo(map).on('click', () => openModal(att.id));
+
+      shown.push([att.lat, att.lng]);
     }
   });
+
+  if (showAll && shown.length > 0) {
+    map.fitBounds(L.latLngBounds(shown), { padding: [40, 40] });
+  }
 }
 
 function initUI() {
@@ -632,8 +687,27 @@ function initUI() {
   document.getElementById('radiusSlider').addEventListener('input', e => {
     radiusKm = parseInt(e.target.value);
     document.getElementById('radiusOutput').textContent = radiusKm + ' km';
+    if (showAll) {
+      showAll = false;
+      document.getElementById('showAllBtn').classList.remove('active');
+      document.getElementById('showAllBtn').textContent = '🌍 Vis alle på kortet';
+      document.getElementById('radiusSlider').disabled = false;
+    }
     updateMap();
     renderAttractions();
+  });
+
+  document.getElementById('showAllBtn').addEventListener('click', () => {
+    showAll = !showAll;
+    const btn = document.getElementById('showAllBtn');
+    btn.classList.toggle('active', showAll);
+    btn.textContent = showAll ? '📍 Tilbage til radius' : '🌍 Vis alle på kortet';
+    document.getElementById('radiusSlider').disabled = showAll;
+    updateMap();
+    renderAttractions();
+    if (!showAll) {
+      map.setView(userLocation, 8);
+    }
   });
 
   document.getElementById('photoUpload').addEventListener('click', () => {
@@ -682,12 +756,13 @@ function renderAttractions() {
   });
   
   const inRadius = sortedAtts.filter(att => {
+    if (showAll) return true;
     const dist = haversine(userLocation[0], userLocation[1], att.lat, att.lng);
     return dist <= radiusKm;
   });
   
   if (inRadius.length === 0) {
-    list.innerHTML = '<div class="empty-state">Ingen attraktioner inden for radius.</div>';
+    list.innerHTML = '<div class="empty-state">Ingen attraktioner inden for radius. Prøv en større radius eller "Vis alle".</div>';
     return;
   }
   
