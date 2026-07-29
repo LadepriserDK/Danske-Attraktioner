@@ -6,13 +6,9 @@
 <title>Danske Attraktioner · Stampbog App</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0A2F51">
-<meta name="description" content="Danmarkstur stampbog - besøg danske attraktioner med geo-låsning via fotografie">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230A2F51' width='192' height='192'/><text x='50%' y='50%' font-size='120' fill='white' text-anchor='middle' dominant-baseline='central'>🗺️</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%230A2F51' width='180' height='180'/><text x='90' y='90' font-size='100' fill='white' text-anchor='middle' dominant-baseline='central'>🗺️</text></svg>">
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
@@ -53,10 +49,8 @@ header {
 }
 
 .logo {
-  font-family: 'Barlow Semi Condensed', sans-serif;
   font-weight: 700;
   font-size: 17px;
-  letter-spacing: .04em;
 }
 
 .spacer { flex: 1; }
@@ -75,25 +69,18 @@ header {
 .header-btn:active {
   background: var(--accent);
   color: var(--bg);
-  border-color: var(--accent);
 }
 
 .container {
   display: flex;
   flex: 1;
   min-height: 0;
-  gap: 0;
 }
 
 #map {
   flex: 1;
   background: #0D3D5C;
-  position: relative;
 }
-
-.leaflet-container { font-family: 'Inter', sans-serif; }
-.leaflet-popup-content-wrapper { background: var(--panel-2); border-radius: 10px; }
-.leaflet-popup-tip { background: var(--panel-2); }
 
 .sidebar {
   width: 340px;
@@ -102,7 +89,6 @@ header {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
 }
 
 @media (max-width: 768px) {
@@ -137,7 +123,6 @@ header {
 .region-tab.active {
   background: var(--accent);
   color: var(--bg);
-  border-color: var(--accent);
 }
 
 .region-tab .count {
@@ -145,10 +130,6 @@ header {
   font-size: 10px;
   color: var(--muted);
   margin-top: 3px;
-}
-
-.region-tab.active .count {
-  color: rgba(255,255,255,.7);
 }
 
 .search-box {
@@ -168,15 +149,10 @@ header {
   font-family: 'Inter', sans-serif;
 }
 
-#searchInput::placeholder {
-  color: var(--muted);
-}
-
 .range-control {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
 }
 
 .range-control label {
@@ -200,7 +176,6 @@ header {
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
-  min-height: 0;
   padding: 12px;
 }
 
@@ -222,7 +197,6 @@ header {
 
 .attraction-item:active {
   border-color: var(--accent);
-  background: rgba(77, 173, 229, .1);
 }
 
 .att-name {
@@ -236,17 +210,6 @@ header {
   gap: 8px;
   font-size: 11px;
   color: var(--muted);
-  flex-wrap: wrap;
-}
-
-.att-price {
-  display: inline-block;
-  background: rgba(242, 183, 64, .15);
-  border: 1px solid rgba(242, 183, 64, .3);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  color: var(--warn);
 }
 
 .att-check {
@@ -264,17 +227,6 @@ header {
   font-size: 12px;
 }
 
-.att-distance {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  font-size: 10px;
-  background: rgba(77, 173, 229, .2);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: var(--accent);
-}
-
 .empty-state {
   padding: 30px 16px;
   text-align: center;
@@ -288,7 +240,6 @@ header {
   inset: 0;
   background: rgba(0,0,0,.7);
   z-index: 2000;
-  animation: fadeIn .15s;
 }
 
 .modal.show {
@@ -296,37 +247,20 @@ header {
   align-items: flex-end;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 .modal-content {
   width: 100%;
   background: var(--panel);
-  border-top: 1px solid var(--line);
   border-radius: 16px 16px 0 0;
   padding: 20px;
-  animation: slideUp .25s;
   max-height: 85vh;
   overflow-y: auto;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 16px;
-  gap: 12px;
-}
-
-.modal-title {
-  flex: 1;
 }
 
 .modal-close {
@@ -335,8 +269,6 @@ header {
   color: var(--text);
   font-size: 24px;
   cursor: pointer;
-  padding: 0;
-  flex-shrink: 0;
 }
 
 .modal-image {
@@ -346,27 +278,13 @@ header {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   margin-bottom: 16px;
-  object-fit: cover;
-}
-
-.modal-section {
-  margin-bottom: 16px;
-}
-
-.modal-section-title {
-  font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  margin-bottom: 8px;
-  font-weight: 600;
 }
 
 .info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .info-card {
@@ -400,26 +318,12 @@ header {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
-  background: var(--panel-2);
-  position: relative;
 }
 
 .photo-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.photo-date {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0,0,0,.6);
-  color: white;
-  font-size: 10px;
-  padding: 4px;
-  text-align: center;
 }
 
 .photo-upload {
@@ -430,37 +334,14 @@ header {
   background: rgba(77, 173, 229, .05);
   text-align: center;
   cursor: pointer;
-  transition: all .15s;
   font-size: 12px;
   color: var(--muted);
-}
-
-.photo-upload:active {
-  border-color: var(--accent);
-  background: rgba(77, 173, 229, .1);
-  color: var(--accent);
-}
-
-.geo-status {
-  padding: 10px;
-  background: rgba(242, 183, 64, .1);
-  border: 1px solid rgba(242, 183, 64, .3);
-  border-radius: var(--radius);
   margin-bottom: 12px;
-  font-size: 12px;
-  color: var(--warn);
-}
-
-.geo-status.success {
-  background: rgba(59, 211, 127, .1);
-  border-color: rgba(59, 211, 127, .3);
-  color: var(--success);
 }
 
 .action-buttons {
   display: flex;
   gap: 8px;
-  margin-top: 12px;
 }
 
 .action-button {
@@ -473,60 +354,13 @@ header {
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  transition: all .15s;
   font-family: 'Inter', sans-serif;
-}
-
-.action-button:active {
-  opacity: .85;
 }
 
 .action-button.secondary {
   background: var(--panel-2);
   color: var(--text);
   border: 1px solid var(--line);
-}
-
-#fileInput, #cameraInput {
-  display: none;
-}
-
-.info-text {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 8px;
-}
-
-.badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  margin-right: 6px;
-  margin-bottom: 6px;
-}
-
-.badge-region {
-  background: rgba(77, 173, 229, .2);
-  color: var(--accent);
-}
-
-.badge-category {
-  background: rgba(242, 183, 64, .2);
-  color: var(--warn);
-}
-
-.geo-lock-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: var(--success);
-  color: white;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
 }
 </style>
 </head>
@@ -565,25 +399,22 @@ header {
 <div class="modal" id="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <div class="modal-title">
-        <h2 id="modalTitle" style="margin: 0; font-size: 16px; font-weight: 700; margin-bottom: 8px;"></h2>
-        <div id="modalBadges"></div>
-      </div>
+      <h2 id="modalTitle" style="margin: 0; font-size: 16px; font-weight: 700;"></h2>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
 
     <img id="modalImage" class="modal-image" alt="">
 
-    <div class="modal-section">
-      <div class="modal-section-title">Detaljer</div>
+    <div style="margin-bottom: 16px;">
+      <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px;">Detaljer</div>
       <div class="info-grid">
         <div class="info-card">
           <div class="info-label">By</div>
           <div class="info-value" id="modalCity">-</div>
         </div>
         <div class="info-card">
-          <div class="info-label">Entré</div>
-          <div class="info-value" id="modalPrice">-</div>
+          <div class="info-label">Region</div>
+          <div class="info-value" id="modalRegion">-</div>
         </div>
         <div class="info-card">
           <div class="info-label">Afstand</div>
@@ -596,65 +427,126 @@ header {
       </div>
     </div>
 
-    <div class="modal-section">
-      <div class="modal-section-title">Status</div>
-      <div id="geoStatus" class="geo-status" style="display:none;"></div>
-      <div class="modal-section-title" style="margin-top: 12px;">Mine Fotos (Geo-låst)</div>
-      <div class="info-text">📍 GPS-position i billedet skal være inden for 100m for at tælle som besøgt</div>
+    <div style="margin-bottom: 16px;">
+      <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px;">Mine Fotos</div>
       <div class="photo-gallery" id="photoGallery"></div>
-      <div class="photo-upload" id="photoUpload">
-        <div>📸 Tag foto med GPS-data</div>
-        <div class="info-text">Klik for kamera - skal tages på stedet!</div>
-      </div>
+      <div class="photo-upload" id="photoUpload">📸 Tag foto med GPS-data</div>
     </div>
 
     <div class="action-buttons">
-      <button class="action-button" id="routeBtn">
-        🗺️ Rutevejledning
-      </button>
+      <button class="action-button" id="routeBtn">🗺️ Rutevejledning</button>
       <button class="action-button secondary" onclick="closeModal()">Luk</button>
     </div>
   </div>
 </div>
 
 <input type="file" id="cameraInput" accept="image/*" capture="environment">
-<input type="file" id="fileInput" accept="image/*">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/index.min.js"></script>
 
 <script>
 const ATTRACTIONS = [
-  { id: 'den-gamle-lillebeltsbro', name: 'Den Gamle Lillebeltsbro', category: 'Bro', region: 'Fyn', lat: 55.5224, lng: 9.7553, city: 'Middelfart', price: 'Gratis', image: '🌉', desc: 'Ikonisk gammel bro fra 1935' },
-  { id: 'hca-barndomshjem', name: "H.C.A's Barndomshjem", category: 'Museum', region: 'Fyn', lat: 55.1201, lng: 10.1967, city: 'Odense', price: 'Gratis', image: '🏠', desc: 'H.C. Andersens barnehjem' },
-  { id: 'egeskov-slot', name: 'Egeskov Slot', category: 'Slot', region: 'Fyn', lat: 55.1146, lng: 10.4139, city: 'Kværndrup', price: '250 kr', image: '🏰', desc: 'Fairytale slot med parker' },
-  { id: 'storeboeltbroen', name: 'Storebæltbroen', category: 'Bro', region: 'Fyn', lat: 55.3313, lng: 10.9231, city: 'Sjælland / Fyn', price: 'Gratis', image: '🌉', desc: 'Verdens længste kombinationsbro' },
-  { id: 'nyborg-slot', name: 'Nyborg Slot', category: 'Slot', region: 'Fyn', lat: 55.2994, lng: 10.7868, city: 'Nyborg', price: '150 kr', image: '🏰', desc: 'Historisk slot fra 1400-tallet' },
-  { id: 'jernbanemuseet', name: 'Jernbanemuseet', category: 'Museum', region: 'Fyn', lat: 55.1201, lng: 10.1967, city: 'Odense', price: '110 kr', image: '🚂', desc: 'Danmarks jernbanehistorie' },
-  { id: 'fyns-hovdestad', name: 'Den Fynske Landsby', category: 'Museum', region: 'Fyn', lat: 55.1046, lng: 10.3881, city: 'Odense', price: '210 kr', image: '🏘️', desc: 'Frilandsmuseum med traditionel landsby' },
-  { id: 'aebelo', name: 'Ænbelo', category: 'Natur', region: 'Fyn', lat: 55.3691, lng: 10.0556, city: 'Bogense', price: 'Gratis', image: '🏞️', desc: 'Naturreservat med strand' },
-  { id: 'svanninge-bakker', name: 'Svanningebakkerne', category: 'Natur', region: 'Fyn', lat: 55.0821, lng: 9.8141, city: 'Faaborg', price: 'Gratis', image: '⛰️', desc: 'Bakker med udsigt' },
-  { id: 'mennesket-ved-havet', name: 'Mennesket ved Havet', category: 'Statue', region: 'Jylland', lat: 56.1669, lng: 8.2128, city: 'Esbjerg', price: 'Gratis', image: '🗿', desc: 'Ikonisk statue ved havet' },
-  { id: 'dybbol-molle', name: 'Dybbøl Mølle', category: 'Monument', region: 'Jylland', lat: 55.1594, lng: 9.7642, city: 'Dybbøl Banke', price: 'Gratis', image: '🏛️', desc: 'Historisk mølle og museum' },
-  { id: 'legoland', name: 'LEGOLAND Billund', category: 'Forlystelse', region: 'Jylland', lat: 55.7530, lng: 9.1169, city: 'Billund', price: '699 kr', image: '🎡', desc: 'Verdens første LEGO park' },
-  { id: 'givskud-zoo', name: 'Givskud Zoo', category: 'Zoo', region: 'Jylland', lat: 55.6794, lng: 8.9569, city: 'Givskud', price: '199 kr', image: '🦁', desc: 'Afrikansk dyrepark' },
-  { id: 'jelling-stenene', name: 'Jelling Stenene', category: 'Monument', region: 'Jylland', lat: 55.8808, lng: 9.4250, city: 'Jelling', price: 'Gratis', image: '🗿', desc: 'UNESCO verdensarvsted' },
-  { id: 'moesgaard-museum', name: 'Moesgård Museum', category: 'Museum', region: 'Jylland', lat: 56.1186, lng: 10.1876, city: 'Aarhus', price: 'Gratis', image: '🏛️', desc: 'Præhistorisk og etnografisk museum' },
-  { id: 'aros-kunstmuseum', name: 'ARoS Kunstmuseum', category: 'Museum', region: 'Jylland', lat: 56.1551, lng: 10.1999, city: 'Aarhus', price: '165 kr', image: '🎨', desc: 'Moderne kunstmuseum med regnbue' },
-  { id: 'den-gamle-by', name: 'Den Gamle By', category: 'Museum', region: 'Jylland', lat: 56.1565, lng: 10.1868, city: 'Aarhus', price: 'Gratis', image: '🏘️', desc: 'Åbent frilandsmuseum' },
-  { id: 'mols-bjerge', name: 'Mols Bjerge', category: 'Natur', region: 'Jylland', lat: 56.2253, lng: 10.3594, city: 'Syddjurs', price: 'Gratis', image: '⛰️', desc: 'Gletcher-bakker med udsigt' },
-  { id: 'rold-kloster', name: 'Rold Kloster', category: 'Kirke', region: 'Jylland', lat: 56.6811, lng: 9.8111, city: 'Randers', price: 'Gratis', image: '⛪', desc: 'Klosterruin fra middelalderen' },
-  { id: 'tivoli', name: 'Tivoli', category: 'Forlystelse', region: 'Sjælland', lat: 55.6733, lng: 12.5673, city: 'København', price: '189 kr', image: '🎪', desc: 'Verdens ældste forlystelsespark' },
-  { id: 'kronborg-slot', name: 'Kronborg Slot', category: 'Slot', region: 'Sjælland', lat: 56.0412, lng: 12.6278, city: 'Helsingør', price: '120 kr', image: '🏰', desc: 'Hamlet\'s berømte slot' },
-  { id: 'frederiksborg-slot', name: 'Frederiksborg Slot', category: 'Slot', region: 'Sjælland', lat: 55.8836, lng: 12.3156, city: 'Hillerød', price: '200 kr', image: '🏰', desc: 'Nordens største slot' },
-  { id: 'nyhavn', name: 'Nyhavn', category: 'Bydel', region: 'Sjælland', lat: 55.6794, lng: 12.5898, city: 'København', price: 'Gratis', image: '🏘️', desc: 'Historisk havn med farvekodede huse' },
-  { id: 'marmorkirken', name: 'Marmorkirken', category: 'Kirke', region: 'Sjælland', lat: 55.6898, lng: 12.5809, city: 'København', price: 'Gratis', image: '⛪', desc: 'Luteherske kirke i klassisk stil' },
-  { id: 'botanisk-have', name: 'Botanisk Have', category: 'Have', region: 'Sjælland', lat: 55.7034, lng: 12.5631, city: 'København', price: 'Gratis', image: '🌿', desc: 'Storslået botanisk have' },
-  { id: 'nationalmuseet', name: 'Nationalmuseet', category: 'Museum', region: 'Sjælland', lat: 55.6728, lng: 12.5717, city: 'København', price: 'Gratis', image: '🏛️', desc: 'Danmarks historie og verden' },
-  { id: 'stevns-klint', name: 'Stevns Klint', category: 'Natur', region: 'Sjælland', lat: 55.3111, lng: 12.3950, city: 'Stevns', price: 'Gratis', image: '⛰️', desc: 'Kridte klipper med fossiler' },
-  { id: 'christiansborg-slot', name: 'Christiansborg Slot', category: 'Slot', region: 'Øerne', lat: 55.6740, lng: 12.5778, city: 'København', price: '200 kr', image: '🏰', desc: 'Kongerigets Slot' },
-  { id: 'mons-klint', name: 'Møn\'s Klint', category: 'Natur', region: 'Øerne', lat: 54.9379, lng: 12.4517, city: 'Borre, Møn', price: 'Gratis', image: '⛰️', desc: 'Værld berømmte få kalkklinter' },
-  { id: 'hammershus', name: 'Hammershus', category: 'Slot', region: 'Øerne', lat: 55.2265, lng: 14.8083, city: 'Allinge Bornholm', price: 'Gratis', image: '🏰', desc: 'Nordeuropas største slotruiner' },
+  // FYN
+  { id: 'den-gamle-lillebeltsbro', name: 'Den Gamle Lillebeltsbro', category: 'Bro', regions: ['Fyn', 'Jylland'], lat: 55.5224, lng: 9.7553, city: 'Middelfart', price: 'Gratis', image: '🌉' },
+  { id: 'hca-barndomshjem', name: "H.C.A's Barndomshjem", category: 'Museum', regions: ['Fyn'], lat: 55.1201, lng: 10.1967, city: 'Odense', price: 'Gratis', image: '🏠' },
+  { id: 'egeskov-slot', name: 'Egeskov Slot', category: 'Slot', regions: ['Fyn'], lat: 55.1146, lng: 10.4139, city: 'Kværndrup', price: '250 kr', image: '🏰' },
+  { id: 'storebeltbroen', name: 'Storebæltbroen', category: 'Bro', regions: ['Fyn', 'Sjælland'], lat: 55.3313, lng: 10.9231, city: 'Mellem byerne', price: 'Gratis', image: '🌉' },
+  { id: 'nyborg-slot', name: 'Nyborg Slot', category: 'Slot', regions: ['Fyn'], lat: 55.2994, lng: 10.7868, city: 'Nyborg', price: '150 kr', image: '🏰' },
+  { id: 'jernbanemuseet', name: 'Jernbanemuseet', category: 'Museum', regions: ['Fyn'], lat: 55.1201, lng: 10.1967, city: 'Odense', price: '110 kr', image: '🚂' },
+  { id: 'fyns-landsby', name: 'Den Fynske Landsby', category: 'Museum', regions: ['Fyn'], lat: 55.1046, lng: 10.3881, city: 'Odense', price: '210 kr', image: '🏘️' },
+  { id: 'fyns-hoved', name: 'Fyns Hoved', category: 'Natur', regions: ['Fyn'], lat: 55.3412, lng: 10.1234, city: 'Martofte', price: 'Gratis', image: '⛰️' },
+  { id: 'aebelo', name: 'Ænbelo', category: 'Natur', regions: ['Fyn'], lat: 55.3691, lng: 10.0556, city: 'Bogense', price: 'Gratis', image: '🏞️' },
+  { id: 'svanningebakkerne', name: 'Svanningebakkerne', category: 'Natur', regions: ['Fyn'], lat: 55.0821, lng: 9.8141, city: 'Faaborg', price: 'Gratis', image: '⛰️' },
+
+  // JYLLAND
+  { id: 'mennesket-ved-havet', name: 'Mennesket ved Havet', category: 'Statue', regions: ['Jylland'], lat: 56.1669, lng: 8.2128, city: 'Esbjerg', price: 'Gratis', image: '🗿' },
+  { id: 'dybbol-molle', name: 'Dybbøl Mølle', category: 'Monument', regions: ['Jylland'], lat: 55.1594, lng: 9.7642, city: 'Dybbøl Banke', price: 'Gratis', image: '🏛️' },
+  { id: 'legoland', name: 'LEGOLAND Billund', category: 'Forlystelse', regions: ['Jylland'], lat: 55.7530, lng: 9.1169, city: 'Billund', price: '699 kr', image: '🎡' },
+  { id: 'rabserg-mille', name: 'Råbjerg Mile', category: 'Natur', regions: ['Jylland'], lat: 57.3189, lng: 10.1542, city: 'Skagen', price: 'Gratis', image: '⛰️' },
+  { id: 'den-gamle-by', name: 'Den Gamle By', category: 'Museum', regions: ['Jylland'], lat: 56.1565, lng: 10.1868, city: 'Aarhus', price: 'Gratis', image: '🏘️' },
+  { id: 'himmelbjergtarnet', name: 'Himmelbjertårnet', category: 'Monument', regions: ['Jylland'], lat: 56.2614, lng: 9.6894, city: 'Ry', price: 'Gratis', image: '🗼' },
+  { id: 'mols-bjerge', name: 'Mols Bjerge', category: 'Natur', regions: ['Jylland'], lat: 56.2253, lng: 10.3594, city: 'Syddjurs', price: 'Gratis', image: '⛰️' },
+  { id: 'grenen', name: 'Grenen', category: 'Natur', regions: ['Jylland'], lat: 57.4375, lng: 10.5833, city: 'Skagen', price: 'Gratis', image: '🌊' },
+  { id: 'jellingstienene', name: 'Jelling Stenene', category: 'Monument', regions: ['Jylland'], lat: 55.8808, lng: 9.4250, city: 'Jelling', price: 'Gratis', image: '🗿' },
+  { id: 'den-uendelige-bro', name: 'Den Uendelige Bro', category: 'Kunstværk', regions: ['Jylland'], lat: 56.1467, lng: 10.1889, city: 'Aarhus', price: 'Gratis', image: '🎨' },
+  { id: 'rubbjerg-knude-fyr', name: 'Rubbjerg Knude Fyr', category: 'Monument', regions: ['Jylland'], lat: 57.3389, lng: 9.6733, city: 'Løenstrup', price: 'Gratis', image: '🗼' },
+  { id: 'aros-kunstmuseum', name: 'ARoS Kunstmuseum', category: 'Museum', regions: ['Jylland'], lat: 56.1551, lng: 10.1999, city: 'Aarhus', price: '165 kr', image: '🎨' },
+  { id: 'ribe-domkirke', name: 'Ribe Domkirke', category: 'Kirke', regions: ['Jylland'], lat: 55.3278, lng: 8.7589, city: 'Ribe', price: 'Gratis', image: '⛪' },
+  { id: 'bunkermuseum-hanstholm', name: 'Bunkermuseum Hanstholm', category: 'Museum', regions: ['Jylland'], lat: 56.9763, lng: 8.6150, city: 'Hanstholm', price: '140 kr', image: '🏛️' },
+  { id: 'fjordenhus', name: 'Fjordenhus', category: 'Museum', regions: ['Jylland'], lat: 55.6794, lng: 9.4289, city: 'Vejle', price: '150 kr', image: '🏠' },
+  { id: 'muldybunkerne', name: 'Muldybunkerne', category: 'Natur', regions: ['Jylland'], lat: 55.5333, lng: 8.0944, city: 'Blåvand', price: 'Gratis', image: '🏞️' },
+  { id: 'koldinghus', name: 'Koldinghus', category: 'Slot', regions: ['Jylland'], lat: 55.4917, lng: 9.4833, city: 'Kolding', price: '130 kr', image: '🏰' },
+  { id: 'ejer-bavnehoj', name: 'Ejer Bavnehøj', category: 'Natur', regions: ['Jylland'], lat: 56.0889, lng: 9.6944, city: 'Skanderborg', price: 'Gratis', image: '⛰️' },
+  { id: 'fregattan-jylland', name: 'Fregattan Jylland', category: 'Museum', regions: ['Jylland'], lat: 56.4694, lng: 10.6969, city: 'Ebeltoft', price: '160 kr', image: '🚢' },
+  { id: 'aalborgtarnet', name: 'Aalborgtårnet', category: 'Monument', regions: ['Jylland'], lat: 57.0489, lng: 9.9159, city: 'Aalborg', price: 'Gratis', image: '🗼' },
+  { id: 'spottrup-borg', name: 'Spøttrup Borg', category: 'Slot', regions: ['Jylland'], lat: 56.8228, lng: 9.1678, city: 'Spøttrup', price: '110 kr', image: '🏰' },
+  { id: 'det-gamle-radhus', name: 'Det Gamle Radhus', category: 'Museum', regions: ['Jylland'], lat: 56.4694, lng: 10.6969, city: 'Ebeltoft', price: 'Gratis', image: '🏛️' },
+  { id: 'den-genfundne-bro', name: 'Den Genfundne Bro', category: 'Monument', regions: ['Jylland'], lat: 55.6417, lng: 9.8250, city: 'Brædstrup', price: 'Gratis', image: '🌉' },
+  { id: 'moesgaard-museum', name: 'Moesgård Museum', category: 'Museum', regions: ['Jylland'], lat: 56.1186, lng: 10.1876, city: 'Aarhus', price: 'Gratis', image: '🏛️' },
+  { id: 'tirpitz', name: 'Tirpitz', category: 'Museum', regions: ['Jylland'], lat: 55.5639, lng: 8.0944, city: 'Blåvand', price: '135 kr', image: '🏛️' },
+  { id: 'bulbjerg', name: 'Bulbjerg', category: 'Natur', regions: ['Jylland'], lat: 56.8361, lng: 8.6278, city: 'Frøstrup', price: 'Gratis', image: '⛰️' },
+  { id: 'kalo-slotsruin', name: 'Kalo Slotsruin', category: 'Monument', regions: ['Jylland'], lat: 56.3556, lng: 10.5875, city: 'Rende', price: 'Gratis', image: '🏰' },
+  { id: 'klimoller-strand', name: 'Klimoller Strand', category: 'Natur', regions: ['Jylland'], lat: 56.9486, lng: 8.5639, city: 'Thisted', price: 'Gratis', image: '🏖️' },
+  { id: 'jomfru-ane-gade', name: 'Jomfru Ane Gade', category: 'Bydel', regions: ['Jylland'], lat: 57.0489, lng: 9.9159, city: 'Aalborg', price: 'Gratis', image: '🏘️' },
+  { id: 'aarhus-radhus', name: 'Aarhus Radhus', category: 'Museum', regions: ['Jylland'], lat: 56.1520, lng: 10.2059, city: 'Aarhus', price: 'Gratis', image: '🏛️' },
+  { id: 'faengslet', name: 'Fængslet', category: 'Museum', regions: ['Jylland'], lat: 55.8617, lng: 9.5878, city: 'Horsens', price: '130 kr', image: '🏛️' },
+  { id: 'rold-skov', name: 'Rold Skov', category: 'Natur', regions: ['Jylland'], lat: 56.6811, lng: 9.8111, city: 'Himmerland', price: 'Gratis', image: '🌲' },
+  { id: 'lokken-strand', name: 'Løkken Strand', category: 'Natur', regions: ['Jylland'], lat: 57.3722, lng: 8.6764, city: 'Løkken', price: 'Gratis', image: '🏖️' },
+  { id: 'nationalpark-vadehavet', name: 'Nationalpark Vadehavet', category: 'Natur', regions: ['Jylland'], lat: 55.3333, lng: 8.6667, city: 'Sydvest-Jylland', price: 'Gratis', image: '🏞️' },
+  { id: 'monsted-kalkgruber', name: 'Monsted Kalkgruber', category: 'Museum', regions: ['Jylland'], lat: 56.4083, lng: 9.8083, city: 'Monsted', price: '120 kr', image: '🏔️' },
+  { id: 'skulpturparken-blokhus', name: 'Skulpturparken Blokhus', category: 'Kunstværk', regions: ['Jylland'], lat: 57.2053, lng: 8.6056, city: 'Blokhus', price: 'Gratis', image: '🗿' },
+  { id: 'lille-vildmose', name: 'Lille Vildmose', category: 'Natur', regions: ['Jylland'], lat: 56.8833, lng: 10.3167, city: 'Storvorde', price: 'Gratis', image: '🌿' },
+  { id: 'givskud-zoo', name: 'Givskud Zoo', category: 'Zoo', regions: ['Jylland'], lat: 55.6794, lng: 8.9569, city: 'Givskud', price: '199 kr', image: '🦁' },
+
+  // SJÆLLAND
+  { id: 'skovtarnet', name: 'Skovtårnet', category: 'Monument', regions: ['Sjælland'], lat: 55.7357, lng: 12.5639, city: 'Rønede', price: 'Gratis', image: '🗼' },
+  { id: 'amalienborg', name: 'Amalienborg', category: 'Slot', regions: ['Sjælland'], lat: 55.6821, lng: 12.5866, city: 'København', price: 'Gratis', image: '🏰' },
+  { id: 'rundetarn', name: 'Rundetårn', category: 'Monument', regions: ['Sjælland'], lat: 55.6797, lng: 12.5743, city: 'København', price: '60 kr', image: '🗼' },
+  { id: 'nyhavn', name: 'Nyhavn', category: 'Bydel', regions: ['Sjælland'], lat: 55.6794, lng: 12.5898, city: 'København', price: 'Gratis', image: '🏘️' },
+  { id: 'de-6-glemte-kaemper', name: 'De 6 Glemte Kaemper', category: 'Kunstværk', regions: ['Sjælland'], lat: 55.6667, lng: 12.4667, city: 'Vestegnen', price: 'Gratis', image: '🗿' },
+  { id: 'tivoli', name: 'Tivoli', category: 'Forlystelse', regions: ['Sjælland'], lat: 55.6733, lng: 12.5673, city: 'København', price: '189 kr', image: '🎪' },
+  { id: 'marmorkirken', name: 'Marmorkirken', category: 'Kirke', regions: ['Sjælland'], lat: 55.6898, lng: 12.5809, city: 'København', price: 'Gratis', image: '⛪' },
+  { id: 'botanisk-have', name: 'Botanisk Have', category: 'Have', regions: ['Sjælland'], lat: 55.7034, lng: 12.5631, city: 'København', price: 'Gratis', image: '🌿' },
+  { id: 'glyptoteket', name: 'Glyptoteket', category: 'Museum', regions: ['Sjælland'], lat: 55.6729, lng: 12.5634, city: 'København', price: '110 kr', image: '🎨' },
+  { id: 'kronborg-slot', name: 'Kronborg Slot', category: 'Slot', regions: ['Sjælland'], lat: 56.0412, lng: 12.6278, city: 'Helsingør', price: '120 kr', image: '🏰' },
+  { id: 'frederiksborg-slot', name: 'Frederiksborg Slot', category: 'Slot', regions: ['Sjælland'], lat: 55.8836, lng: 12.3156, city: 'Hillerød', price: '200 kr', image: '🏰' },
+  { id: 'vor-frelsers-kirke', name: 'Vor Frelsers Kirke', category: 'Kirke', regions: ['Sjælland'], lat: 55.6879, lng: 12.5870, city: 'København', price: 'Gratis', image: '⛪' },
+  { id: 'stevns-klint', name: 'Stevns Klint', category: 'Natur', regions: ['Sjælland'], lat: 55.3111, lng: 12.3950, city: 'Stevns', price: 'Gratis', image: '⛰️' },
+  { id: 'nationalmuseet', name: 'Nationalmuseet', category: 'Museum', regions: ['Sjælland'], lat: 55.6728, lng: 12.5717, city: 'København', price: 'Gratis', image: '🏛️' },
+  { id: 'rosenberg-slot', name: 'Rosenberg Slot', category: 'Slot', regions: ['Sjælland'], lat: 55.6827, lng: 12.5811, city: 'København', price: '150 kr', image: '🏰' },
+  { id: 'den-lille-havfrue', name: 'Den Lille Havfrue', category: 'Statue', regions: ['Sjælland'], lat: 55.6805, lng: 12.5986, city: 'København', price: 'Gratis', image: '🧜' },
+  { id: 'frederiksberg-slot', name: 'Frederiksberg Slot', category: 'Slot', regions: ['Sjælland'], lat: 55.6831, lng: 12.4894, city: 'København', price: 'Gratis', image: '🏰' },
+  { id: 'nyboder', name: 'Nyboder', category: 'Bydel', regions: ['Sjælland'], lat: 55.6917, lng: 12.5700, city: 'København', price: 'Gratis', image: '🏘️' },
+  { id: 'skjoldungernes-land', name: 'Skjoldungernes Land', category: 'Museum', regions: ['Sjælland'], lat: 55.5481, lng: 12.0856, city: 'Roskilde Fjord', price: '95 kr', image: '🏛️' },
+  { id: 'bakken', name: 'Bakken', category: 'Forlystelse', regions: ['Sjælland'], lat: 55.7753, lng: 12.5842, city: 'Klampenborg', price: 'Gratis', image: '🎡' },
+  { id: 'faxe-kalkbrud', name: 'Faxe Kalkbrud', category: 'Museum', regions: ['Sjælland'], lat: 55.2722, lng: 12.2861, city: 'Faxe', price: '110 kr', image: '⛰️' },
+  { id: 'det-kongelige-teater', name: 'Det Kongelige Teater', category: 'Museum', regions: ['Sjælland'], lat: 55.6786, lng: 12.5819, city: 'København', price: '150 kr', image: '🎭' },
+  { id: 'grundtvigs-kirke', name: 'Grundtvigs Kirke', category: 'Kirke', regions: ['Sjælland'], lat: 55.7311, lng: 12.4758, city: 'København', price: 'Gratis', image: '⛪' },
+  { id: 'rosneas-fyr', name: 'Rosnæs Fyr', category: 'Monument', regions: ['Sjælland'], lat: 55.5347, lng: 11.6278, city: 'Kalundborg', price: 'Gratis', image: '🗼' },
+  { id: 'museet-for-sofart', name: 'Museet for Sofart', category: 'Museum', regions: ['Sjælland'], lat: 56.0381, lng: 12.6208, city: 'Helsingør', price: '150 kr', image: '⛵' },
+  { id: 'tystrup-bavelse', name: 'Tystrup-Bavelse', category: 'Natur', regions: ['Sjælland'], lat: 55.4833, lng: 11.7333, city: 'Tystrup', price: 'Gratis', image: '🏞️' },
+  { id: 'vikingeskibsmuseet', name: 'Vikingeskibsmuseet', category: 'Museum', regions: ['Sjælland'], lat: 55.6442, lng: 12.0969, city: 'Roskilde', price: '150 kr', image: '🚢' },
+  { id: 'arken-museum', name: 'Arken Museum', category: 'Museum', regions: ['Sjælland'], lat: 55.6122, lng: 12.4381, city: 'Ishøj', price: '100 kr', image: '🎨' },
+  { id: 'kastellet', name: 'Kastellet', category: 'Slot', regions: ['Sjælland'], lat: 55.6917, lng: 12.5700, city: 'København', price: 'Gratis', image: '🏰' },
+
+  // ØERNE
+  { id: 'mons-klint', name: "Møn's Klint", category: 'Natur', regions: ['Øerne'], lat: 54.9379, lng: 12.4517, city: 'Borre, Møn', price: 'Gratis', image: '⛰️' },
+  { id: 'christiansborg-slot', name: 'Christiansborg Slot', category: 'Slot', regions: ['Øerne'], lat: 55.6740, lng: 12.5778, city: 'København', price: '200 kr', image: '🏰' },
+  { id: 'eklodalen', name: 'Eklødalen', category: 'Natur', regions: ['Øerne'], lat: 55.2245, lng: 14.9389, city: 'Almindingen, Bornholm', price: 'Gratis', image: '🏞️' },
+  { id: 'dodekalitten', name: 'Dodekalitten', category: 'Kunstværk', regions: ['Øerne'], lat: 55.1190, lng: 14.9389, city: 'Glentehøj, Lolland', price: 'Gratis', image: '🗿' },
+  { id: 'hammershus', name: 'Hammershus', category: 'Slot', regions: ['Øerne'], lat: 55.2265, lng: 14.8083, city: 'Allinge Bornholm', price: 'Gratis', image: '🏰' },
+  { id: 'vallekilde', name: 'Vallekilde', category: 'Bydel', regions: ['Øerne'], lat: 54.8832, lng: 11.7872, city: 'Vallekilde, Svendborg', price: 'Gratis', image: '🏘️' },
+  { id: 'osterlars-rundkirke', name: "Østerlars Rundkirke", category: 'Kirke', regions: ['Øerne'], lat: 55.1917, lng: 14.9417, city: 'Gudhjem, Bornholm', price: '50 kr', image: '⛪' },
+  { id: 'christania', name: 'Christania', category: 'Bydel', regions: ['Øerne'], lat: 55.6720, lng: 12.6419, city: 'København, Amager', price: 'Gratis', image: '🏘️' },
+  { id: 'ducodde-strand', name: 'Ducodde Strand', category: 'Natur', regions: ['Øerne'], lat: 55.0631, lng: 14.9756, city: 'Nexø, Bornholm', price: 'Gratis', image: '🏖️' },
+  { id: 'valdemars-slot', name: 'Valdemars Slot', category: 'Slot', regions: ['Øerne'], lat: 54.9483, lng: 11.5528, city: 'Svendborg, Tåsinge', price: '150 kr', image: '🏰' },
+  { id: 'opalsoen', name: 'Opalsøen', category: 'Natur', regions: ['Øerne'], lat: 55.1333, lng: 14.9389, city: 'Allinge, Bornholm', price: 'Gratis', image: '💎' },
+  { id: 'anholt-fyr', name: 'Anholt Fyr', category: 'Monument', regions: ['Øerne'], lat: 56.7239, lng: 11.5089, city: 'Ørkenen, Anholt', price: 'Gratis', image: '🗼' },
+  { id: 'maribo-domkirke', name: 'Maribo Domkirke', category: 'Kirke', regions: ['Øerne'], lat: 54.7753, lng: 11.5156, city: 'Maribo, Lolland', price: '50 kr', image: '⛪' },
+  { id: 'helligdomsklipperne', name: 'Helligdomsklipperne', category: 'Natur', regions: ['Øerne'], lat: 55.1917, lng: 14.9417, city: 'Gudhjem, Bornholm', price: 'Gratis', image: '⛰️' },
+  { id: 'bispechuen', name: 'Bispechuen', category: 'Natur', regions: ['Øerne'], lat: 56.3186, lng: 8.8408, city: 'Stendalgraven, Fur', price: 'Gratis', image: '⛰️' },
+  { id: 'gedser-odde', name: 'Gedser Odde', category: 'Natur', regions: ['Øernes'], lat: 54.5669, lng: 11.9386, city: 'Gedser, Falster', price: 'Gratis', image: '🏖️' }
 ];
 
 const REGIONS = ['Jylland', 'Fyn', 'Sjælland', 'Øerne'];
@@ -676,15 +568,13 @@ window.addEventListener('DOMContentLoaded', () => {
         userLocation = [pos.coords.latitude, pos.coords.longitude];
         updateMap();
         renderAttractions();
-      },
-      () => console.log('Geolokation afvist')
+      }
     );
   }
 });
 
 function initMap() {
   map = L.map('map').setView(userLocation, 7);
-  
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap',
     maxZoom: 19
@@ -715,19 +605,7 @@ function updateMap() {
       
       L.marker([att.lat, att.lng], {
         icon: L.divIcon({
-          html: `<div style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: ${hasGeoPhoto ? '#3BD37F' : isVisited ? '#F2B740' : '#4DADE5'};
-            border-radius: 50%;
-            border: 3px solid white;
-            font-size: 18px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.3);
-          ">${att.image}</div>`,
-          className: '',
+          html: `<div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: ${hasGeoPhoto ? '#3BD37F' : isVisited ? '#F2B740' : '#4DADE5'}; border-radius: 50%; border: 3px solid white; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.3);">${att.image}</div>`,
           iconSize: [40, 40],
           iconAnchor: [20, 20]
         })
@@ -739,8 +617,8 @@ function updateMap() {
 function initUI() {
   const regionTabs = document.getElementById('regionTabs');
   REGIONS.forEach(region => {
-    const count = ATTRACTIONS.filter(a => a.region === region).length;
-    const visited = ATTRACTIONS.filter(a => a.region === region && localStorage.getItem(`visited_${a.id}`)).length;
+    const count = ATTRACTIONS.filter(a => a.regions.includes(region)).length;
+    const visited = ATTRACTIONS.filter(a => a.regions.includes(region) && localStorage.getItem(`visited_${a.id}`)).length;
     
     const btn = document.createElement('button');
     btn.className = 'region-tab';
@@ -785,7 +663,7 @@ function applyFilters() {
   
   filteredAttractions = ATTRACTIONS.filter(att => {
     const matchSearch = !searchTerm || att.name.toLowerCase().includes(searchTerm) || att.city.toLowerCase().includes(searchTerm);
-    const matchRegion = !selectedRegion || att.region === selectedRegion;
+    const matchRegion = !selectedRegion || att.regions.includes(selectedRegion);
     
     return matchSearch && matchRegion;
   });
@@ -823,11 +701,10 @@ function renderAttractions() {
         <div class="att-name">${att.image} ${att.name}</div>
         <div class="att-meta">
           <span>${att.city}</span>
-          <span class="att-price">${att.price}</span>
+          <span>${dist.toFixed(1)} km</span>
         </div>
-        ${hasGeoPhoto ? '<div class="geo-lock-badge">🔒 Geo-låst</div>' : ''}
+        ${hasGeoPhoto ? '<div style="position: absolute; top: 8px; left: 8px; background: var(--success); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">🔒 Geo-låst</div>' : ''}
         ${isVisited && !hasGeoPhoto ? '<div class="att-check">✓</div>' : ''}
-        <div class="att-distance">${dist.toFixed(1)} km</div>
       </div>
     `;
   }).join('');
@@ -838,20 +715,14 @@ function openModal(id) {
   const att = ATTRACTIONS.find(a => a.id === id);
   
   document.getElementById('modalTitle').textContent = att.name;
-  document.getElementById('modalBadges').innerHTML = `
-    <span class="badge badge-region">${att.region}</span>
-    <span class="badge badge-category">${att.category}</span>
-  `;
   
   const dist = haversine(userLocation[0], userLocation[1], att.lat, att.lng);
   document.getElementById('modalCity').textContent = att.city;
-  document.getElementById('modalPrice').textContent = att.price;
+  document.getElementById('modalRegion').textContent = att.regions.join(' / ');
   document.getElementById('modalDistance').textContent = dist.toFixed(1) + ' km';
   document.getElementById('modalCategory').textContent = att.category;
   
   document.getElementById('modalImage').src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'><rect fill='%23153252' width='400' height='200'/><text x='200' y='100' font-size='100' text-anchor='middle' dominant-baseline='central'>${att.image}</text></svg>`;
-  
-  updateGeoStatus(att);
   
   document.getElementById('routeBtn').onclick = () => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${att.lat},${att.lng}&origin=${userLocation[0]},${userLocation[1]}`;
@@ -865,19 +736,6 @@ function openModal(id) {
 function closeModal() {
   document.getElementById('modal').classList.remove('show');
   currentAttractionId = null;
-}
-
-function updateGeoStatus(att) {
-  const hasGeoPhoto = localStorage.getItem(`geo_locked_${att.id}`);
-  const geoStatusEl = document.getElementById('geoStatus');
-  
-  if (hasGeoPhoto) {
-    geoStatusEl.style.display = 'block';
-    geoStatusEl.className = 'geo-status success';
-    geoStatusEl.textContent = '🔒 Geo-låst bekræftet! Du var definitiv på stedet.';
-  } else {
-    geoStatusEl.style.display = 'none';
-  }
 }
 
 async function handlePhotoUpload(e) {
@@ -914,13 +772,12 @@ async function handlePhotoUpload(e) {
       localStorage.setItem(`photos_${currentAttractionId}`, JSON.stringify(photos));
       
       renderPhotos();
-      updateGeoStatus(att);
       renderAttractions();
       updateMap();
     };
     reader.readAsDataURL(file);
   } catch (err) {
-    alert('⚠️ Ingen GPS-data i billedet. Sørg for at have lokationsdeling aktiveret på kameraet.');
+    alert('⚠️ Ingen GPS-data i billedet.');
   }
   
   e.target.value = '';
@@ -933,9 +790,6 @@ function renderPhotos() {
   gallery.innerHTML = photos.map((photo, idx) => `
     <div class="photo-item">
       <img src="${photo.data}" alt="Foto ${idx + 1}" style="cursor: pointer;" onclick="deletePhoto(${idx})">
-      <div class="photo-date">
-        ${photo.geoLocked ? '🔒' : '📸'} ${photo.date}
-      </div>
     </div>
   `).join('');
 }
@@ -968,8 +822,8 @@ Total besøgt: ${visited}/${total}
 🔒 Geo-låst: ${geoLocked}
 
 ${REGIONS.map(r => {
-    const rTotal = ATTRACTIONS.filter(a => a.region === r).length;
-    const rVisited = ATTRACTIONS.filter(a => a.region === r && localStorage.getItem(`visited_${a.id}`)).length;
+    const rTotal = ATTRACTIONS.filter(a => a.regions.includes(r)).length;
+    const rVisited = ATTRACTIONS.filter(a => a.regions.includes(r) && localStorage.getItem(`visited_${a.id}`)).length;
     return `${r}: ${rVisited}/${rTotal}`;
   }).join('\n')}`);
 }
