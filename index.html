@@ -170,7 +170,14 @@ body{background:var(--bg);color:var(--text);
 .gallery .lock{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);
   font-size:10px;text-align:center;padding:2px}
 .note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:9px}
-#camInput{display:none}
+#camInput,#coverInput{display:none}
+.linkrow{display:flex;gap:14px;justify-content:center;margin-top:9px;flex-wrap:wrap}
+.linkbtn{
+  background:none;border:none;color:var(--muted);
+  font-size:12px;font-family:inherit;text-decoration:underline;
+  cursor:pointer;padding:4px 2px;
+}
+.linkbtn:active{color:var(--accent)}
 @media(min-width:900px){.mapwrap{height:52vh}.list{padding:0 20px 30px}}
 </style>
 </head>
@@ -266,7 +273,11 @@ body{background:var(--bg);color:var(--text);
       <a class="btn alt" id="dWeb" target="_blank" rel="noopener">🌐 Info</a>
     </div>
     <div class="btnrow">
-      <button class="btn alt" id="dImg">🖼️ Skift billede</button>
+      <button class="btn alt" id="dImg">🖼️ Vælg billede fra telefon</button>
+    </div>
+    <div class="linkrow">
+      <button class="linkbtn" id="dImgUrl">eller indsæt en billed-adresse</button>
+      <button class="linkbtn" id="dImgClear">fjern mit billede</button>
     </div>
 
     <div class="seclabel">Mine fotos</div>
@@ -281,6 +292,7 @@ body{background:var(--bg);color:var(--text);
 </div>
 
 <input type="file" id="camInput" accept="image/*" capture="environment">
+<input type="file" id="coverInput" accept="image/*">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/index.min.js"></script>
@@ -408,11 +420,46 @@ function noteImages(){
   document.getElementById('imgNote').innerHTML =
     'Fotos hentes fra Wikipedia og Wikimedia Commons og gemmes lokalt — '
     + have + ' af ' + ATTRACTIONS.length + ' har et billede.<br><br>'
-    + 'Mangler et billede, kan du selv indsætte et: åbn attraktionen og tryk '
-    + '"Skift billede". Dit eget billede bruges frem for det hentede.<br><br>'
+    + 'Mangler et billede, kan du selv vælge et: åbn attraktionen og tryk '
+    + '"Vælg billede fra telefon". Det formindskes automatisk og bruges '
+    + 'frem for det hentede.<br><br>'
     + '<b>Adgang</b> er angivet efter type, ikke efter kontrollerede priser: '
     + '"Fri adgang" er steder uden port eller billetsalg, "Billet – se info" '
     + 'er steder med operatør. Tryk Info for den aktuelle pris.';
+}
+
+/* Formindsker et valgt billede før det gemmes. Telefonfotos fylder
+   3-8 MB — browserens lager rummer omkring 5 MB i alt, så de skal ned. */
+function shrinkImage(file, maxW, quality){
+  return new Promise((resolve, reject) => {
+    const rd = new FileReader();
+    rd.onerror = () => reject(new Error('Kunne ikke læse filen'));
+    rd.onload = () => {
+      const im = new Image();
+      im.onerror = () => reject(new Error(
+        'Billedformatet kan ikke vises af browseren. Prøv at gemme det som JPG.'));
+      im.onload = () => {
+        const s = Math.min(1, maxW / im.width);
+        const w = Math.max(1, Math.round(im.width * s));
+        const h = Math.max(1, Math.round(im.height * s));
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(im, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', quality));
+      };
+      im.src = rd.result;
+    };
+    rd.readAsDataURL(file);
+  });
+}
+
+function storageKB(){
+  let n = 0;
+  for (let i = 0; i < localStorage.length; i++){
+    const k = localStorage.key(i);
+    n += (k.length + (localStorage.getItem(k) || '').length);
+  }
+  return Math.round(n / 1024);
 }
 
 /* Fylder et felt med billede. Fejler URL'en, vises kategorinavnet
@@ -689,29 +736,37 @@ function delPhoto(i){
 
 /* ---------- foto ---------- */
 async function handlePhoto(e){
-  const f = e.target.files[0]; if (!f || !current) return;
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f || !current) return;
   const a = current;
+
   let plat=null, plng=null;
   try{ const ex = await exifr.parse(f); if (ex && ex.latitude){ plat=ex.latitude; plng=ex.longitude; } }catch(_){}
   if (plat === null && gps){ plat = gps[0]; plng = gps[1]; }
 
-  const rd = new FileReader();
-  rd.onload = ev => {
-    let ok=false, d=null;
-    if (plat !== null){ d = km(a.lat,a.lng,plat,plng); ok = d <= 0.15; }
-    const ps = pics(a.id);
-    ps.push({data:ev.target.result, date:new Date().toLocaleDateString('da-DK'), geo:ok});
-    try{ localStorage.setItem('p_'+a.id, JSON.stringify(ps)); }
-    catch(err){ alert('Der er ikke plads til flere fotos i browserens lager.'); return; }
-    if (ok){ localStorage.setItem('g_'+a.id,'1'); localStorage.setItem('v_'+a.id,'1'); }
-    drawGallery(); render(); buildRegions(); buildStats();
-    if (!ok) alert(d === null
-      ? 'Fotoet er gemt, men appen kender ikke din position, så den er ikke bekræftet.'
-      : 'Fotoet er gemt. Din position er ' + d.toFixed(1) + ' km fra ' + a.name
-        + ', så den er ikke låst som bekræftet.');
-  };
-  rd.readAsDataURL(f);
-  e.target.value = '';
+  let data;
+  try{ data = await shrinkImage(f, 900, 0.75); }
+  catch(err){ alert(err.message || 'Billedet kunne ikke behandles.'); return; }
+
+  let ok = false, d = null;
+  if (plat !== null){ d = km(a.lat, a.lng, plat, plng); ok = d <= 0.15; }
+
+  const ps = pics(a.id);
+  ps.push({data, date:new Date().toLocaleDateString('da-DK'), geo:ok});
+  try{ localStorage.setItem('p_'+a.id, JSON.stringify(ps)); }
+  catch(err){
+    alert('Der er ikke plads til flere fotos i browserens lager ('
+      + storageKB() + ' kB brugt). Slet nogle af de gamle først.');
+    return;
+  }
+  if (ok){ localStorage.setItem('g_'+a.id,'1'); localStorage.setItem('v_'+a.id,'1'); }
+
+  drawGallery(); render(); buildRegions(); buildStats();
+  if (!ok) alert(d === null
+    ? 'Fotoet er gemt, men appen kender ikke din position, så det er ikke bekræftet.'
+    : 'Fotoet er gemt. Din position er ' + d.toFixed(1) + ' km fra ' + a.name
+      + ', så den er ikke låst som bekræftet.');
 }
 
 /* ---------- indstillinger ---------- */
@@ -734,7 +789,9 @@ function buildStats(){
   const lk  = ATTRACTIONS.filter(a => lockd(a.id)).length;
   document.getElementById('statFacts').innerHTML =
     `<div class="fact"><div class="k">Besøgt</div><div class="v">${dn} / ${tot}</div></div>
-     <div class="fact"><div class="k">Bekræftet med foto</div><div class="v">${lk}</div></div>`;
+     <div class="fact"><div class="k">Bekræftet med foto</div><div class="v">${lk}</div></div>
+     <div class="fact"><div class="k">Egne billeder</div><div class="v">${Object.keys(OWN()).length}</div></div>
+     <div class="fact"><div class="k">Plads brugt</div><div class="v">${storageKB()} kB</div></div>`;
 }
 
 /* ---------- ark ---------- */
@@ -816,15 +873,36 @@ document.getElementById('reloadImgs').onclick = async function(){
   toast(n + ' af ' + ATTRACTIONS.length + ' har nu et billede');
 };
 
-document.getElementById('dImg').onclick = () => {
+/* --- forsidebillede: vælg fra telefonen --- */
+document.getElementById('dImg').onclick = () =>
+  document.getElementById('coverInput').click();
+
+document.getElementById('coverInput').onchange = async function(e){
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f || !current) return;
   const a = current;
-  const own = OWN();
-  const nu = own[a.id] || '';
-  const svar = prompt(
-    'Indsæt en billed-URL til ' + a.name + '.\n\n'
-    + 'Find billedet på f.eks. Wikipedia, Google Maps eller turistsiden, '
-    + 'højreklik og kopiér billedadressen.\n'
-    + 'Lad feltet stå tomt for at bruge det automatisk hentede igen.', nu);
+  toast('Behandler billede…');
+  try{
+    const url = await shrinkImage(f, 640, 0.72);
+    const own = OWN();
+    own[a.id] = url;
+    localStorage.setItem('ownimg', JSON.stringify(own));
+    openDetail(a.id); render(); noteImages();
+    toast('Billede gemt (' + Math.round(url.length / 1024) + ' kB)');
+  }catch(err){
+    const fuld = String(err && err.name) === 'QuotaExceededError'
+      || /quota/i.test(String(err));
+    alert(fuld
+      ? 'Der er ikke plads i browserens lager. Slet nogle af dine egne fotos '
+        + 'under attraktionerne, og prøv igen.'
+      : (err.message || 'Billedet kunne ikke gemmes.'));
+  }
+};
+
+document.getElementById('dImgUrl').onclick = () => {
+  const a = current, own = OWN();
+  const svar = prompt('Indsæt en billed-adresse til ' + a.name, own[a.id] || '');
   if (svar === null) return;
   const v = svar.trim();
   if (v) own[a.id] = v; else delete own[a.id];
@@ -832,6 +910,15 @@ document.getElementById('dImg').onclick = () => {
   catch(e){ toast('Kunne ikke gemme'); return; }
   openDetail(a.id); render(); noteImages();
   toast(v ? 'Billede opdateret' : 'Eget billede fjernet');
+};
+
+document.getElementById('dImgClear').onclick = () => {
+  const a = current, own = OWN();
+  if (!own[a.id]){ toast('Du har ikke sat et eget billede her'); return; }
+  delete own[a.id];
+  localStorage.setItem('ownimg', JSON.stringify(own));
+  openDetail(a.id); render(); noteImages();
+  toast('Dit billede er fjernet');
 };
 
 document.getElementById('dDrop').onclick = () => document.getElementById('camInput').click();
