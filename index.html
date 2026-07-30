@@ -98,14 +98,19 @@ body{background:var(--bg);color:var(--text);
 .card{display:flex;align-items:center;gap:12px;padding:9px;margin-bottom:8px;
   background:var(--panel);border:1px solid var(--line);border-radius:var(--r);cursor:pointer}
 .card:active{border-color:var(--accent)}
-.thumb{width:66px;height:66px;flex:none;border-radius:10px;overflow:hidden;
-  position:relative;display:flex;align-items:center;justify-content:center;background:var(--panel2)}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumbwrap{width:66px;height:66px;flex:none;position:relative}
+.thumb{
+  width:100%;height:100%;border-radius:10px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--panel2);
+}
+.thumb>img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb .ph{font-size:10px;font-weight:700;line-height:1.2;text-align:center;
   padding:4px;word-break:break-word}
 .badge-ok{position:absolute;top:0;right:0;background:var(--ok);color:#06210F;
   font-size:11px;font-weight:800;width:20px;height:20px;display:flex;
-  align-items:center;justify-content:center;border-bottom-left-radius:8px}
+  align-items:center;justify-content:center;border-bottom-left-radius:8px;
+  border-top-right-radius:10px;z-index:2}
 .cardbody{flex:1;min-width:0}
 .cardbody .nm{font-size:15px;font-weight:600;line-height:1.25;margin-bottom:3px}
 .cardbody .mt{font-size:12px;color:var(--muted)}
@@ -139,9 +144,12 @@ body{background:var(--bg);color:var(--text);
   border-radius:var(--r);background:var(--panel2);color:var(--text);
   font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
 .wide.on{background:var(--accent);border-color:var(--accent);color:#08131C}
-.hero{width:100%;height:190px;border-radius:var(--r);background:var(--panel2);
-  object-fit:cover;display:block;margin-bottom:14px}
-.hero.none{display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted)}
+.hero{
+  width:100%;height:200px;border-radius:var(--r);background:var(--panel2);
+  overflow:hidden;margin-bottom:14px;display:flex;
+  align-items:center;justify-content:center;
+}
+.hero>img{width:100%;height:100%;object-fit:cover;display:block}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .chip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;
   background:rgba(77,173,229,.16);color:var(--accent)}
@@ -225,6 +233,9 @@ body{background:var(--bg);color:var(--text);
 
     <div class="seclabel">Min status</div>
     <div class="facts" id="statFacts"></div>
+
+    <div class="seclabel">Billeder</div>
+    <button class="wide" id="reloadImgs">Hent billeder forfra</button>
 
     <div class="note" id="imgNote"></div>
   </div>
@@ -404,6 +415,48 @@ function noteImages(){
     + 'er steder med operatør. Tryk Info for den aktuelle pris.';
 }
 
+/* Fylder et felt med billede. Fejler URL'en, vises kategorinavnet
+   i stedet — aldrig browserens brudte-billede-ikon.                */
+function fillThumb(box, a, isHero){
+  const ph = () => {
+    box.innerHTML = '';
+    const s = document.createElement('span');
+    if (isHero){
+      s.textContent = 'Intet foto — tryk "Skift billede"';
+      s.style.cssText = 'font-size:13px;color:var(--muted);text-align:center;padding:0 20px';
+      box.classList.add('none');
+    } else {
+      s.className = 'ph';
+      s.style.color = col(a.cat);
+      s.textContent = a.cat;
+    }
+    box.appendChild(s);
+  };
+
+  let url = imgFor(a);
+  if (url && url.startsWith('http://')) url = 'https://' + url.slice(7);
+  if (!url){ ph(); return; }
+
+  ph();                                   // pladsholder mens der hentes
+  const im = new Image();
+  im.alt = a.name;
+  im.decoding = 'async';
+  im.onload  = () => {
+    box.classList.remove('none');
+    box.innerHTML = '';
+    box.appendChild(im);
+  };
+  im.onerror = () => { markBad(a.id); ph(); };
+  im.src = url;
+}
+
+function markBad(id){
+  if (PHOTOS[id]){
+    PHOTOS[id] = '';
+    try{ localStorage.setItem('wikiimg', JSON.stringify(PHOTOS)); }catch(e){}
+  }
+}
+
 /* ---------- besked over kortet ---------- */
 let toastTimer = null;
 function toast(msg, sticky){
@@ -559,14 +612,12 @@ function render(){
   list.forEach(a => {
     const d = distTo(a);
     const done = lockd(a.id), vis = seen(a.id);
-    const img = imgFor(a);
     const card = document.createElement('div');
     card.className='card';
     card.onclick = () => openDetail(a.id);
     card.innerHTML = `
-      <div class="thumb">
-        ${img ? `<img src="${img}" alt="" loading="lazy">`
-              : `<span class="ph" style="color:${col(a.cat)}">${a.cat}</span>`}
+      <div class="thumbwrap">
+        <div class="thumb"></div>
         ${done||vis ? '<span class="badge-ok">✓</span>' : ''}
       </div>
       <div class="cardbody">
@@ -574,10 +625,11 @@ function render(){
         <div class="mt">${a.city}</div>
         <div class="tags">
           <span class="tag">${a.cat}</span>
-          <span class="tag ${a.price==='Gratis'?'free':''}">${a.price}</span>
+          <span class="tag ${a.price === 'Fri adgang' ? 'free' : ''}">${a.price}</span>
         </div>
       </div>
       <div class="carddist">${d < 10 ? d.toFixed(1) : Math.round(d)} km</div>`;
+    fillThumb(card.querySelector('.thumb'), a, false);
     frag.appendChild(card);
   });
   box.innerHTML = '';
@@ -596,10 +648,9 @@ function openDetail(id){
   document.getElementById('dPrice').textContent = a.price;
   document.getElementById('dReg').textContent   = a.reg.join(' / ');
 
-  const hero = imgFor(a);
-  document.getElementById('dHeroWrap').innerHTML = hero
-    ? `<img class="hero" src="${hero}" alt="${a.name}">`
-    : `<div class="hero none">Intet foto — tryk "Skift billede" for at indsætte et</div>`;
+  const hw = document.getElementById('dHeroWrap');
+  hw.innerHTML = '<div class="hero" id="dHero"></div>';
+  fillThumb(document.getElementById('dHero'), a, true);
 
   document.getElementById('dRoute').href =
     `https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}`;
@@ -752,6 +803,19 @@ document.getElementById('searchClose').onclick = clearSearch;
 searchInp.addEventListener('input', e => { query = e.target.value; render(); });
 
 /* ---------- foto/besøgt ---------- */
+document.getElementById('reloadImgs').onclick = async function(){
+  localStorage.removeItem('wikiimg');
+  PHOTOS = {};
+  this.textContent = 'Henter…';
+  this.disabled = true;
+  render();
+  await loadPhotos();
+  this.textContent = 'Hent billeder forfra';
+  this.disabled = false;
+  const n = ATTRACTIONS.filter(a => imgFor(a)).length;
+  toast(n + ' af ' + ATTRACTIONS.length + ' har nu et billede');
+};
+
 document.getElementById('dImg').onclick = () => {
   const a = current;
   const own = OWN();
