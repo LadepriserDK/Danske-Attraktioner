@@ -33,6 +33,16 @@ body{background:var(--bg);color:var(--text);
   box-shadow:0 2px 8px rgba(0,0,0,.45);
 }
 .mapbtn.on{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok)}
+.toast{
+  position:absolute;left:50%;bottom:14px;transform:translateX(-50%) translateY(8px);
+  z-index:600;max-width:82%;
+  background:rgba(21,30,40,.96);border:1px solid var(--accent);
+  color:var(--text);font-size:13px;font-weight:600;
+  padding:10px 16px;border-radius:99px;text-align:center;
+  box-shadow:0 3px 14px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;transition:opacity .18s, transform .18s;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ---------- RADIUS ---------- */
 .radiusbar{
@@ -164,6 +174,7 @@ body{background:var(--bg);color:var(--text);
     <div class="mapbtn" id="locBtn" title="Sæt punkt på min position">⌖</div>
     <div class="mapbtn" id="pinBtn" title="Sæt punkt et andet sted">📍</div>
   </div>
+  <div class="toast" id="toast"></div>
 </div>
 
 <div class="radiusbar" id="radiusBar">
@@ -337,6 +348,20 @@ function noteImages(){
     + 'egen side frem for at vise et beløb der kan være forældet.';
 }
 
+/* ---------- besked over kortet ---------- */
+let toastTimer = null;
+function toast(msg, sticky){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  if (!sticky) toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+function hideToast(){
+  clearTimeout(toastTimer);
+  document.getElementById('toast').classList.remove('show');
+}
+
 /* ---------- kort ---------- */
 function initMap(){
   map = L.map('map',{zoomControl:false, touchZoom:true, doubleClickZoom:true,
@@ -351,23 +376,19 @@ function initMap(){
     movePin([e.latlng.lat, e.latlng.lng], false);
     pinMode = false;
     document.getElementById('pinBtn').classList.remove('on');
+    toast('Punkt sat — afstande måles herfra');
   });
 }
 
-/* pin-ikonet: crosshair når det står på min position, ellers gul nål */
+/* gul nål = min position · rød nål = punkt jeg selv har sat */
 function pinIcon(onMe){
-  if (onMe) return L.divIcon({className:'',iconSize:[30,30],iconAnchor:[15,15],html:
-    `<svg width="30" height="30" viewBox="0 0 30 30">
-       <circle cx="15" cy="15" r="9" fill="rgba(77,173,229,.25)" stroke="#fff" stroke-width="2.6"/>
-       <circle cx="15" cy="15" r="9" fill="none" stroke="#4DADE5" stroke-width="1.7"/>
-       <circle cx="15" cy="15" r="3" fill="#4DADE5"/>
-       <path d="M15 0v6M15 24v6M0 15h6M24 15h6" stroke="#4DADE5" stroke-width="2.4"/>
-     </svg>`});
+  const fill = onMe ? '#F2B740' : '#E5484D';
+  const dot  = onMe ? '#0F1720' : '#FFFFFF';
   return L.divIcon({className:'',iconSize:[30,38],iconAnchor:[15,36],html:
     `<svg width="30" height="38" viewBox="0 0 30 38">
        <path d="M15 37C15 37 28 22 28 14A13 13 0 1 0 2 14c0 8 13 23 13 23z"
-             fill="#F2B740" stroke="#fff" stroke-width="2.4"/>
-       <circle cx="15" cy="14" r="5" fill="#0F1720"/>
+             fill="${fill}" stroke="#fff" stroke-width="2.4"/>
+       <circle cx="15" cy="14" r="5" fill="${dot}"/>
      </svg>`});
 }
 
@@ -413,8 +434,11 @@ function movePin(p, onMe){
   frameRadius();
 }
 function snapToGps(){
-  if (!gps){ alert('Appen kender endnu ikke din position. Tillad adgang til lokation.'); return; }
+  if (!gps){ toast('Appen kender endnu ikke din position'); return; }
+  pinMode = false;
+  document.getElementById('pinBtn').classList.remove('on');
   movePin(gps, true);
+  toast('Flyttet til din position');
 }
 
 /* ---------- filtrering ---------- */
@@ -626,10 +650,10 @@ document.getElementById('allBtn').onclick = function(){
 };
 document.getElementById('locBtn').onclick = snapToGps;
 document.getElementById('pinBtn').onclick = function(){
-  if (!atGps){ snapToGps(); return; }
   pinMode = !pinMode;
   this.classList.toggle('on', pinMode);
-  if (pinMode) alert('Tryk på kortet for at flytte punktet dertil. Afstande måles derfra.');
+  if (pinMode) toast('Tryk på kortet for at sætte punktet', true);
+  else hideToast();
 };
 document.getElementById('setBtn').onclick = () => {
   buildRegions(); buildStats(); openSheet('setSheet');
