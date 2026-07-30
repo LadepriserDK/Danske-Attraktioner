@@ -16,40 +16,39 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-body{
-  background:var(--bg);color:var(--text);
+body{background:var(--bg);color:var(--text);
   font-family:Inter,system-ui,-apple-system,sans-serif;
-  display:flex;flex-direction:column;height:100vh;height:100dvh;
-}
+  display:flex;flex-direction:column;height:100vh;height:100dvh}
 
 /* ---------- KORT ---------- */
 .mapwrap{position:relative;flex:none;height:38vh;min-height:200px}
 #map{width:100%;height:100%;background:#0D3D5C}
 .leaflet-control-attribution{font-size:9px}
-.mapbtns{position:absolute;right:10px;bottom:10px;z-index:500;display:flex;flex-direction:column;gap:8px}
+.mapbtns{position:absolute;right:10px;top:10px;z-index:500;
+  display:flex;flex-direction:column;gap:8px}
 .mapbtn{
-  width:42px;height:42px;border-radius:12px;border:1px solid var(--line);
-  background:rgba(21,30,40,.92);color:var(--text);font-size:18px;
+  width:44px;height:44px;border-radius:12px;border:1px solid var(--line);
+  background:rgba(21,30,40,.94);color:var(--text);font-size:19px;
   display:flex;align-items:center;justify-content:center;cursor:pointer;
-  box-shadow:0 2px 8px rgba(0,0,0,.4);
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
 }
 .mapbtn.on{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok)}
 
 /* ---------- RADIUS ---------- */
 .radiusbar{
-  display:flex;align-items:center;gap:12px;padding:10px 14px;
-  background:var(--panel);border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);flex:none;
-  border-left:3px solid var(--ok);transition:opacity .2s;
+  display:flex;align-items:center;gap:12px;
+  margin:9px 10px 4px;padding:10px 14px;flex:none;
+  background:var(--panel);
+  border:2px solid var(--ok);border-radius:var(--r);
+  transition:border-color .2s, opacity .2s;
 }
-.radiusbar.off{opacity:.35;border-left-color:var(--line)}
+.radiusbar.off{border-color:var(--line);opacity:.4}
 .radiusbar label{font-size:13px;color:var(--muted);flex:none}
 .radiusbar input[type=range]{flex:1;accent-color:var(--accent);height:30px}
-.radiusbar input[type=range]:disabled{cursor:not-allowed}
 .radiusbar output{font-size:16px;font-weight:700;min-width:66px;text-align:right}
 
 /* ---------- TITEL ---------- */
-.titlebar{display:flex;align-items:center;gap:9px;padding:11px 14px 9px;background:var(--panel);flex:none}
+.titlebar{display:flex;align-items:center;gap:8px;padding:6px 14px 9px;flex:none}
 .titlebar h1{font-size:16px;font-weight:700}
 .titlebar .sub{font-size:11px;color:var(--muted);margin-top:2px}
 .spacer{flex:1}
@@ -60,41 +59,43 @@ body{
 }
 .iconbtn.on{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok);background:rgba(59,211,127,.12)}
 
-/* ---------- AKTIVE FILTRE ---------- */
-.filters{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 8px;background:var(--panel);flex:none}
-.filters:empty{display:none}
-.fchip{
-  font-size:11px;font-weight:600;padding:5px 10px;border-radius:99px;
-  background:rgba(77,173,229,.18);color:var(--accent);cursor:pointer;
-  display:flex;align-items:center;gap:5px;
+/* ---------- SØGERÆKKE ---------- */
+.searchrow{display:none;gap:8px;padding:0 10px 9px;flex:none}
+.searchrow.show{display:flex}
+.searchrow input{
+  flex:1;padding:12px 14px;border:2px solid var(--accent);border-radius:var(--r);
+  background:var(--panel);color:var(--text);font-size:16px;font-family:inherit;
 }
+.searchrow input::placeholder{color:var(--muted)}
+.searchrow button{
+  width:46px;flex:none;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--panel2);color:var(--text);font-size:17px;cursor:pointer;
+}
+
+/* ---------- FILTRE ---------- */
+.filters{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 8px;flex:none}
+.filters:empty{display:none}
+.fchip{font-size:11px;font-weight:600;padding:5px 10px;border-radius:99px;
+  background:rgba(77,173,229,.18);color:var(--accent);cursor:pointer;
+  display:flex;align-items:center;gap:5px}
 .fchip b{font-weight:800;font-size:13px;line-height:1}
 
 /* ---------- LISTE ---------- */
-.listhead{display:flex;align-items:baseline;gap:8px;padding:2px 14px 9px;background:var(--panel);flex:none}
+.listhead{display:flex;align-items:baseline;gap:8px;padding:0 14px 9px;flex:none}
 .listhead b{font-size:15px}
 .listhead span{font-size:12px;color:var(--muted)}
-.list{flex:1;min-height:0;overflow-y:auto;padding:6px 10px 30px;-webkit-overflow-scrolling:touch}
-.card{
-  display:flex;align-items:center;gap:12px;padding:9px;margin-bottom:8px;
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);cursor:pointer;
-}
+.list{flex:1;min-height:0;overflow-y:auto;padding:0 10px 30px;-webkit-overflow-scrolling:touch}
+.card{display:flex;align-items:center;gap:12px;padding:9px;margin-bottom:8px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);cursor:pointer}
 .card:active{border-color:var(--accent)}
-.thumb{
-  width:66px;height:66px;flex:none;border-radius:10px;overflow:hidden;
-  position:relative;display:flex;align-items:center;justify-content:center;
-  background:var(--panel2);
-}
+.thumb{width:66px;height:66px;flex:none;border-radius:10px;overflow:hidden;
+  position:relative;display:flex;align-items:center;justify-content:center;background:var(--panel2)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.thumb .ph{
-  font-size:10px;font-weight:700;line-height:1.2;text-align:center;
-  padding:4px;word-break:break-word;hyphens:auto;
-}
-.badge-ok{
-  position:absolute;top:0;right:0;background:var(--ok);color:#06210F;
-  font-size:11px;font-weight:800;width:20px;height:20px;
-  display:flex;align-items:center;justify-content:center;border-bottom-left-radius:8px;
-}
+.thumb .ph{font-size:10px;font-weight:700;line-height:1.2;text-align:center;
+  padding:4px;word-break:break-word}
+.badge-ok{position:absolute;top:0;right:0;background:var(--ok);color:#06210F;
+  font-size:11px;font-weight:800;width:20px;height:20px;display:flex;
+  align-items:center;justify-content:center;border-bottom-left-radius:8px}
 .cardbody{flex:1;min-width:0}
 .cardbody .nm{font-size:15px;font-weight:600;line-height:1.25;margin-bottom:3px}
 .cardbody .mt{font-size:12px;color:var(--muted)}
@@ -107,11 +108,9 @@ body{
 /* ---------- ARK ---------- */
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:3000;display:none;align-items:flex-end}
 .sheet.open{display:flex}
-.sheetbox{
-  width:100%;max-height:88vh;overflow-y:auto;background:var(--panel);
+.sheetbox{width:100%;max-height:88vh;overflow-y:auto;background:var(--panel);
   border-radius:20px 20px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));
-  animation:up .22s ease;
-}
+  animation:up .22s ease}
 @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .sheethead{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
 .sheethead h2{font-size:19px;font-weight:700;line-height:1.25;flex:1}
@@ -130,15 +129,9 @@ body{
   border-radius:var(--r);background:var(--panel2);color:var(--text);
   font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
 .wide.on{background:var(--accent);border-color:var(--accent);color:#08131C}
-input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);
-  border-radius:var(--r);background:var(--panel2);color:var(--text);
-  font-size:16px;font-family:inherit}
-input[type=text]::placeholder{color:var(--muted)}
-.hint{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.5}
 .hero{width:100%;height:190px;border-radius:var(--r);background:var(--panel2);
   object-fit:cover;display:block;margin-bottom:14px}
-.hero.none{display:flex;align-items:center;justify-content:center;
-  font-size:13px;color:var(--muted)}
+.hero.none{display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted)}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .chip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;
   background:rgba(77,173,229,.16);color:var(--accent)}
@@ -160,7 +153,7 @@ input[type=text]::placeholder{color:var(--muted)}
   font-size:10px;text-align:center;padding:2px}
 .note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:9px}
 #camInput{display:none}
-@media(min-width:900px){.mapwrap{height:52vh}.list{padding:6px 20px 30px}}
+@media(min-width:900px){.mapwrap{height:52vh}.list{padding:0 20px 30px}}
 </style>
 </head>
 <body>
@@ -168,8 +161,8 @@ input[type=text]::placeholder{color:var(--muted)}
 <div class="mapwrap">
   <div id="map"></div>
   <div class="mapbtns">
-    <div class="mapbtn" id="locBtn" title="Min position">⌖</div>
-    <div class="mapbtn" id="pinBtn" title="Sæt punkt på kortet">📍</div>
+    <div class="mapbtn" id="locBtn" title="Sæt punkt på min position">⌖</div>
+    <div class="mapbtn" id="pinBtn" title="Sæt punkt et andet sted">📍</div>
   </div>
 </div>
 
@@ -185,8 +178,14 @@ input[type=text]::placeholder{color:var(--muted)}
     <div class="sub" id="progress">–</div>
   </div>
   <div class="spacer"></div>
+  <button class="iconbtn" id="searchBtn" title="Søg">🔍</button>
   <button class="iconbtn" id="allBtn" title="Vis alle">🌍</button>
   <button class="iconbtn" id="setBtn" title="Indstillinger">⚙️</button>
+</div>
+
+<div class="searchrow" id="searchRow">
+  <input type="text" id="search" placeholder="Søg navn, by eller kategori…">
+  <button id="searchClose">✕</button>
 </div>
 
 <div class="filters" id="filters"></div>
@@ -205,11 +204,6 @@ input[type=text]::placeholder{color:var(--muted)}
       <h2>Indstillinger</h2>
       <button class="closebtn" data-close="setSheet">✕</button>
     </div>
-
-    <div class="seclabel">Søg efter navn eller by</div>
-    <input type="text" id="search" placeholder="fx Kronborg, Skagen, slot…">
-    <div class="hint">Søgning ser på alle 100 attraktioner uanset radius.
-      Resultatet vises i listen bagved — luk arket for at se det.</div>
 
     <div class="seclabel">Landsdel</div>
     <div class="regions" id="regions"></div>
@@ -278,15 +272,15 @@ const CAT_COLOR = {
   Bydel:'#A0AEC0', Bykvarter:'#A0AEC0'
 };
 
-let map, ring, markers, meMarker, pinMarker;
-let gps = null;                 // faktisk GPS-position
-let pin = null;                 // manuelt sat punkt på kortet
-let centre = [56.10, 10.20];    // det punkt afstande måles fra
+let map, ring, markers;
+let gps = null;                  // seneste GPS-position
+let centre = [56.10, 10.20];     // punktet afstande måles fra (= pin'ens plads)
+let atGps = true;                // står pin'en på min position?
 let radius = 50;
 let showAll = false, onlyMissing = false, pinMode = false;
 let region = null, query = '';
 let current = null;
-let PHOTOS = {};                // id -> billed-URL
+let PHOTOS = {};
 let firstFix = true;
 
 /* ---------- hjælpere ---------- */
@@ -296,39 +290,34 @@ function km(a,b,c,d){
   const x=Math.sin(dLa/2)**2 + Math.cos(a*p)*Math.cos(c*p)*Math.sin(dLo/2)**2;
   return R*2*Math.asin(Math.sqrt(x));
 }
-const seen  = id => !!localStorage.getItem('v_'+id);
-const lockd = id => !!localStorage.getItem('g_'+id);
-const pics  = id => JSON.parse(localStorage.getItem('p_'+id) || '[]');
-const col   = c  => CAT_COLOR[c] || '#4DADE5';
-const distTo = a => km(centre[0], centre[1], a.lat, a.lng);
+const seen   = id => !!localStorage.getItem('v_'+id);
+const lockd  = id => !!localStorage.getItem('g_'+id);
+const pics   = id => JSON.parse(localStorage.getItem('p_'+id) || '[]');
+const col    = c  => CAT_COLOR[c] || '#4DADE5';
+const distTo = a  => km(centre[0], centre[1], a.lat, a.lng);
 
-/* ---------- billeder: hentes samlet én gang ---------- */
+/* ---------- billeder ---------- */
 async function loadPhotos(){
   PHOTOS = JSON.parse(localStorage.getItem('wikiimg') || '{}');
   const need = ATTRACTIONS.filter(a => a.wiki && !(a.id in PHOTOS));
   if (!need.length){ noteImages(); return; }
-
   for (let i = 0; i < need.length; i += 40){
     const part = need.slice(i, i + 40);
-    const titles = part.map(a => a.wiki).join('|');
     try{
       const url = 'https://da.wikipedia.org/w/api.php?action=query&format=json'
         + '&origin=*&redirects=1&prop=pageimages&piprop=thumbnail'
-        + '&pithumbsize=480&pilimit=50&titles=' + encodeURIComponent(titles);
+        + '&pithumbsize=480&pilimit=50&titles='
+        + encodeURIComponent(part.map(a => a.wiki).join('|'));
       const j = await (await fetch(url)).json();
       const q = j.query || {};
-
       const src = {};
-      Object.values(q.pages || {}).forEach(p => {
-        if (p.thumbnail) src[p.title] = p.thumbnail.source;
-      });
+      Object.values(q.pages || {}).forEach(p => { if (p.thumbnail) src[p.title] = p.thumbnail.source; });
       const alias = {};
       (q.normalized || []).forEach(n => alias[n.from] = n.to);
       (q.redirects  || []).forEach(r => alias[r.from] = r.to);
-
       part.forEach(a => {
-        let t = a.wiki, guard = 0;
-        while (alias[t] && guard++ < 5) t = alias[t];
+        let t = a.wiki, g = 0;
+        while (alias[t] && g++ < 5) t = alias[t];
         PHOTOS[a.id] = src[t] || '';
       });
     }catch(e){
@@ -342,19 +331,16 @@ async function loadPhotos(){
 function noteImages(){
   const have = Object.values(PHOTOS).filter(Boolean).length;
   document.getElementById('imgNote').innerHTML =
-    'Fotos hentes fra Wikipedia én gang og gemmes lokalt — '
-    + have + ' af ' + ATTRACTIONS.length + ' har et billede. '
-    + 'Resten viser kategorinavnet i stedet.<br><br>'
+    'Fotos hentes fra Wikipedia én gang og gemmes lokalt — ' + have + ' af '
+    + ATTRACTIONS.length + ' har et billede.<br><br>'
     + 'Priser og åbningstider ændrer sig ofte, så der linkes til attraktionens '
     + 'egen side frem for at vise et beløb der kan være forældet.';
 }
 
 /* ---------- kort ---------- */
 function initMap(){
-  map = L.map('map',{
-    zoomControl:false, touchZoom:true, doubleClickZoom:true,
-    scrollWheelZoom:true, dragging:true, tap:true
-  }).setView(centre, 8);
+  map = L.map('map',{zoomControl:false, touchZoom:true, doubleClickZoom:true,
+    scrollWheelZoom:true, dragging:true, tap:true}).setView(centre, 8);
   L.control.zoom({position:'topleft'}).addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {maxZoom:19, attribution:'© OpenStreetMap'}).addTo(map);
@@ -362,22 +348,21 @@ function initMap(){
 
   map.on('click', e => {
     if (!pinMode) return;
-    setPin([e.latlng.lat, e.latlng.lng]);
+    movePin([e.latlng.lat, e.latlng.lng], false);
     pinMode = false;
     document.getElementById('pinBtn').classList.remove('on');
   });
 }
 
-function crosshairIcon(){
-  return L.divIcon({className:'',iconSize:[28,28],iconAnchor:[14,14],html:
-    `<svg width="28" height="28" viewBox="0 0 28 28">
-       <circle cx="14" cy="14" r="8" fill="none" stroke="#fff" stroke-width="2.5"/>
-       <circle cx="14" cy="14" r="8" fill="none" stroke="#4DADE5" stroke-width="1.6"/>
-       <circle cx="14" cy="14" r="2.6" fill="#4DADE5"/>
-       <path d="M14 0v6M14 22v6M0 14h6M22 14h6" stroke="#4DADE5" stroke-width="2.2"/>
+/* pin-ikonet: crosshair når det står på min position, ellers gul nål */
+function pinIcon(onMe){
+  if (onMe) return L.divIcon({className:'',iconSize:[30,30],iconAnchor:[15,15],html:
+    `<svg width="30" height="30" viewBox="0 0 30 30">
+       <circle cx="15" cy="15" r="9" fill="rgba(77,173,229,.25)" stroke="#fff" stroke-width="2.6"/>
+       <circle cx="15" cy="15" r="9" fill="none" stroke="#4DADE5" stroke-width="1.7"/>
+       <circle cx="15" cy="15" r="3" fill="#4DADE5"/>
+       <path d="M15 0v6M15 24v6M0 15h6M24 15h6" stroke="#4DADE5" stroke-width="2.4"/>
      </svg>`});
-}
-function pinIcon(){
   return L.divIcon({className:'',iconSize:[30,38],iconAnchor:[15,36],html:
     `<svg width="30" height="38" viewBox="0 0 30 38">
        <path d="M15 37C15 37 28 22 28 14A13 13 0 1 0 2 14c0 8 13 23 13 23z"
@@ -395,17 +380,16 @@ function drawMap(list){
       opacity:.5, fillOpacity:.05, dashArray:'6,7'}).addTo(map);
   }
 
-  if (gps) L.marker(gps,{icon:crosshairIcon(),
-    interactive:false, zIndexOffset:900}).addTo(markers);
-  if (pin) L.marker(pin,{icon:pinIcon(), zIndexOffset:950})
-    .addTo(markers).on('click', clearPin);
+  // pin'en / crosshairet der definerer centrum
+  L.marker(centre,{icon:pinIcon(atGps), zIndexOffset:950})
+    .addTo(markers)
+    .on('click', () => { if (!atGps) snapToGps(); });
 
   const pts = [];
   list.forEach(a => {
     const done = lockd(a.id), vis = seen(a.id);
     const bg = done ? '#3BD37F' : vis ? '#F2B740' : col(a.cat);
-    L.marker([a.lat,a.lng],{icon:L.divIcon({className:'',iconSize:[18,18],
-      iconAnchor:[9,9],
+    L.marker([a.lat,a.lng],{icon:L.divIcon({className:'',iconSize:[18,18],iconAnchor:[9,9],
       html:`<div style="width:18px;height:18px;border-radius:50%;background:${bg};
         border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.55)"></div>`
     })}).addTo(markers).on('click', () => openDetail(a.id));
@@ -415,73 +399,67 @@ function drawMap(list){
   if (showAll && pts.length) map.fitBounds(L.latLngBounds(pts),{padding:[30,30]});
 }
 
-/* ---------- punkt på kortet ---------- */
-function setPin(p){
-  pin = p; centre = p;
-  document.getElementById('pinBtn').classList.add('on');
-  render();
+/* kortudsnittet følger radius */
+function frameRadius(){
+  if (showAll) return;
+  const b = L.latLng(centre[0], centre[1]).toBounds(radius * 2000);
+  map.fitBounds(b, {padding:[16,16], animate:true});
 }
-function clearPin(){
-  pin = null;
-  centre = gps || [56.10,10.20];
-  document.getElementById('pinBtn').classList.remove('on');
+
+function movePin(p, onMe){
+  centre = p; atGps = onMe;
+  document.getElementById('pinBtn').classList.toggle('on', !onMe);
   render();
+  frameRadius();
+}
+function snapToGps(){
+  if (!gps){ alert('Appen kender endnu ikke din position. Tillad adgang til lokation.'); return; }
+  movePin(gps, true);
 }
 
 /* ---------- filtrering ---------- */
 function currentList(){
-  const searching = query.trim().length > 0;
+  const q = query.trim().toLowerCase();
   return ATTRACTIONS
     .filter(a => !region || a.reg.includes(region))
     .filter(a => !onlyMissing || !(seen(a.id) || lockd(a.id)))
-    .filter(a => {
-      if (!searching) return true;
-      const q = query.trim().toLowerCase();
-      return a.name.toLowerCase().includes(q)
-          || a.city.toLowerCase().includes(q)
-          || a.cat.toLowerCase().includes(q);
-    })
-    // søgning og "vis alle" ser bort fra radius
-    .filter(a => showAll || searching || distTo(a) <= radius)
+    .filter(a => !q || a.name.toLowerCase().includes(q)
+                    || a.city.toLowerCase().includes(q)
+                    || a.cat.toLowerCase().includes(q))
+    .filter(a => showAll || q || distTo(a) <= radius)
     .sort((a,b) => distTo(a) - distTo(b));
 }
 
-/* ---------- aktive filtre som chips ---------- */
 function drawFilters(){
   const box = document.getElementById('filters');
   const bits = [];
-  if (query.trim()) bits.push(['Søg: "'+query.trim()+'"', () => {
-    query=''; document.getElementById('search').value=''; render(); }]);
-  if (region) bits.push(['Landsdel: '+region, () => {
-    region=null; buildRegions(); render(); }]);
+  if (query.trim()) bits.push(['Søg: "'+query.trim()+'"', clearSearch]);
+  if (region) bits.push(['Landsdel: '+region, () => { region=null; buildRegions(); render(); }]);
   if (onlyMissing) bits.push(['Kun manglende', () => {
     onlyMissing=false;
     const b=document.getElementById('onlyMissing');
-    b.classList.remove('on'); b.textContent='Vis kun dem jeg mangler';
-    render(); }]);
-  if (pin) bits.push(['Punkt på kort', clearPin]);
+    b.classList.remove('on'); b.textContent='Vis kun dem jeg mangler'; render(); }]);
+  if (!atGps) bits.push(['Punkt på kort', snapToGps]);
 
   box.innerHTML = '';
-  bits.forEach(([txt, fn]) => {
+  bits.forEach(([t,fn]) => {
     const c = document.createElement('div');
-    c.className = 'fchip';
-    c.innerHTML = txt + ' <b>×</b>';
-    c.onclick = fn;
+    c.className='fchip'; c.innerHTML = t + ' <b>×</b>'; c.onclick = fn;
     box.appendChild(c);
   });
 }
 
-/* ---------- tegn listen ---------- */
+/* ---------- liste ---------- */
 function render(){
   const list = currentList();
   drawMap(list);
   drawFilters();
 
-  const searching = query.trim().length > 0;
+  const q = query.trim();
   document.getElementById('listTitle').textContent =
-    searching ? 'Søgeresultat' : pin ? 'Nær punktet på kortet' : 'Attraktioner i området';
+    q ? 'Søgeresultat' : atGps ? 'Attraktioner i området' : 'Nær punktet på kortet';
   document.getElementById('listCount').textContent =
-    list.length + (showAll || searching ? ' fundet' : ' · ' + radius + ' km');
+    list.length + (showAll || q ? ' fundet' : ' · ' + radius + ' km');
 
   const tot = ATTRACTIONS.length;
   const done = ATTRACTIONS.filter(a => seen(a.id) || lockd(a.id)).length;
@@ -489,8 +467,9 @@ function render(){
 
   const box = document.getElementById('list');
   if (!list.length){
-    box.innerHTML = '<div class="empty">Ingen attraktioner her.<br>'
-      + 'Træk radius længere ud, eller tryk 🌍 for at se alle 100.</div>';
+    box.innerHTML = '<div class="empty">'
+      + (q ? 'Ingen træffere på "'+q+'".' : 'Ingen attraktioner her.')
+      + '<br>Træk radius længere ud, eller tryk 🌍 for at se alle 100.</div>';
     return;
   }
 
@@ -499,15 +478,13 @@ function render(){
     const d = distTo(a);
     const done = lockd(a.id), vis = seen(a.id);
     const img = PHOTOS[a.id];
-
     const card = document.createElement('div');
-    card.className = 'card';
+    card.className='card';
     card.onclick = () => openDetail(a.id);
     card.innerHTML = `
       <div class="thumb">
-        ${img
-          ? `<img src="${img}" alt="" loading="lazy">`
-          : `<span class="ph" style="color:${col(a.cat)}">${a.cat}</span>`}
+        ${img ? `<img src="${img}" alt="" loading="lazy">`
+              : `<span class="ph" style="color:${col(a.cat)}">${a.cat}</span>`}
         ${done||vis ? '<span class="badge-ok">✓</span>' : ''}
       </div>
       <div class="cardbody">
@@ -525,11 +502,10 @@ function render(){
   box.appendChild(frag);
 }
 
-/* ---------- detaljeark ---------- */
+/* ---------- detalje ---------- */
 function openDetail(id){
   const a = ATTRACTIONS.find(x => x.id === id);
   current = a;
-
   document.getElementById('dName').textContent = a.name;
   document.getElementById('dChips').innerHTML =
     `<span class="chip">${a.cat}</span>` + a.reg.map(r=>`<span class="chip">${r}</span>`).join('');
@@ -538,14 +514,12 @@ function openDetail(id){
   document.getElementById('dPrice').textContent = a.price;
   document.getElementById('dReg').textContent   = a.reg.join(' / ');
 
-  const w = document.getElementById('dHeroWrap');
-  w.innerHTML = PHOTOS[a.id]
+  document.getElementById('dHeroWrap').innerHTML = PHOTOS[a.id]
     ? `<img class="hero" src="${PHOTOS[a.id]}" alt="${a.name}">`
     : `<div class="hero none">Intet foto tilgængeligt</div>`;
 
   document.getElementById('dRoute').href =
     `https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}`;
-
   const web = document.getElementById('dWeb');
   if (a.web){ web.href = a.web; web.textContent = '🌐 Hjemmeside'; }
   else { web.href = 'https://www.google.com/search?q=' + encodeURIComponent(a.name+' '+a.city);
@@ -553,11 +527,9 @@ function openDetail(id){
 
   document.getElementById('dVisit').textContent =
     seen(a.id) ? '✓ Besøgt — fjern markering' : 'Markér som besøgt';
-
   drawGallery();
   openSheet('detSheet');
 }
-
 function drawGallery(){
   const a = current, g = document.getElementById('dGallery');
   g.innerHTML = pics(a.id).map((p,i) =>
@@ -578,29 +550,24 @@ function delPhoto(i){
 async function handlePhoto(e){
   const f = e.target.files[0]; if (!f || !current) return;
   const a = current;
-  let plat = null, plng = null;
-  try{
-    const ex = await exifr.parse(f);
-    if (ex && ex.latitude){ plat = ex.latitude; plng = ex.longitude; }
-  }catch(_){}
+  let plat=null, plng=null;
+  try{ const ex = await exifr.parse(f); if (ex && ex.latitude){ plat=ex.latitude; plng=ex.longitude; } }catch(_){}
   if (plat === null && gps){ plat = gps[0]; plng = gps[1]; }
 
   const rd = new FileReader();
   rd.onload = ev => {
-    let ok = false, d = null;
-    if (plat !== null){ d = km(a.lat, a.lng, plat, plng); ok = d <= 0.15; }
+    let ok=false, d=null;
+    if (plat !== null){ d = km(a.lat,a.lng,plat,plng); ok = d <= 0.15; }
     const ps = pics(a.id);
     ps.push({data:ev.target.result, date:new Date().toLocaleDateString('da-DK'), geo:ok});
     try{ localStorage.setItem('p_'+a.id, JSON.stringify(ps)); }
     catch(err){ alert('Der er ikke plads til flere fotos i browserens lager.'); return; }
     if (ok){ localStorage.setItem('g_'+a.id,'1'); localStorage.setItem('v_'+a.id,'1'); }
     drawGallery(); render(); buildRegions(); buildStats();
-    if (!ok){
-      alert(d === null
-        ? 'Fotoet er gemt, men appen kender ikke din position, så den er ikke bekræftet.'
-        : 'Fotoet er gemt. Din position er ' + d.toFixed(1) + ' km fra ' + a.name
-          + ', så den er ikke låst som bekræftet.');
-    }
+    if (!ok) alert(d === null
+      ? 'Fotoet er gemt, men appen kender ikke din position, så den er ikke bekræftet.'
+      : 'Fotoet er gemt. Din position er ' + d.toFixed(1) + ' km fra ' + a.name
+        + ', så den er ikke låst som bekræftet.');
   };
   rd.readAsDataURL(f);
   e.target.value = '';
@@ -632,60 +599,69 @@ function buildStats(){
 /* ---------- ark ---------- */
 function openSheet(id){ document.getElementById(id).classList.add('open'); }
 function closeSheet(id){ document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('[data-close]').forEach(b =>
-  b.onclick = () => closeSheet(b.dataset.close));
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => closeSheet(b.dataset.close));
 document.querySelectorAll('.sheet').forEach(s =>
   s.onclick = e => { if (e.target === s) closeSheet(s.id); });
 
-/* ---------- radius-slider ---------- */
+/* ---------- radius ---------- */
 const slider = document.getElementById('radius');
 const sliderBar = document.getElementById('radiusBar');
 function setRadius(v){
   radius = +v;
   document.getElementById('radiusOut').textContent = radius + ' km';
   render();
+  frameRadius();
 }
 slider.addEventListener('input',  e => setRadius(e.target.value));
 slider.addEventListener('change', e => setRadius(e.target.value));
 
-/* ---------- globus ---------- */
+/* ---------- knapper ---------- */
 document.getElementById('allBtn').onclick = function(){
   showAll = !showAll;
   this.classList.toggle('on', showAll);
   slider.disabled = showAll;
   sliderBar.classList.toggle('off', showAll);
   render();
-  if (!showAll && gps) map.setView(gps, 9);
+  if (!showAll) frameRadius();
 };
-
-/* ---------- kortknapper ---------- */
-document.getElementById('locBtn').onclick = () => {
-  if (gps){ clearPin(); map.setView(gps, 11); }
-  else alert('Appen har endnu ikke din position. Tillad adgang til lokation i browseren.');
-};
+document.getElementById('locBtn').onclick = snapToGps;
 document.getElementById('pinBtn').onclick = function(){
-  if (pin){ clearPin(); return; }
+  if (!atGps){ snapToGps(); return; }
   pinMode = !pinMode;
   this.classList.toggle('on', pinMode);
-  if (pinMode) alert('Tryk på kortet for at sætte et punkt. Afstande måles derfra.');
+  if (pinMode) alert('Tryk på kortet for at flytte punktet dertil. Afstande måles derfra.');
 };
-
-/* ---------- øvrige ---------- */
 document.getElementById('setBtn').onclick = () => {
   buildRegions(); buildStats(); openSheet('setSheet');
 };
-document.getElementById('clearReg').onclick = () => {
-  region = null; buildRegions(); render();
-};
+document.getElementById('clearReg').onclick = () => { region=null; buildRegions(); render(); };
 document.getElementById('onlyMissing').onclick = function(){
   onlyMissing = !onlyMissing;
   this.classList.toggle('on', onlyMissing);
   this.textContent = onlyMissing ? '✓ Viser kun dem jeg mangler' : 'Vis kun dem jeg mangler';
   render();
 };
-document.getElementById('search').addEventListener('input', e => {
-  query = e.target.value; render();
-});
+
+/* ---------- søgning ---------- */
+const searchRow = document.getElementById('searchRow');
+const searchInp = document.getElementById('search');
+document.getElementById('searchBtn').onclick = function(){
+  const on = !searchRow.classList.contains('show');
+  searchRow.classList.toggle('show', on);
+  this.classList.toggle('on', on);
+  if (on) setTimeout(() => searchInp.focus(), 60);
+  else clearSearch();
+};
+function clearSearch(){
+  query = ''; searchInp.value = '';
+  searchRow.classList.remove('show');
+  document.getElementById('searchBtn').classList.remove('on');
+  render();
+}
+document.getElementById('searchClose').onclick = clearSearch;
+searchInp.addEventListener('input', e => { query = e.target.value; render(); });
+
+/* ---------- foto/besøgt ---------- */
 document.getElementById('dDrop').onclick = () => document.getElementById('camInput').click();
 document.getElementById('camInput').onchange = handlePhoto;
 document.getElementById('dVisit').onclick = () => {
@@ -709,12 +685,9 @@ if (navigator.geolocation){
     const np = [p.coords.latitude, p.coords.longitude];
     const moved = !gps || km(gps[0],gps[1],np[0],np[1]) > 0.15;
     gps = np;
-    if (!pin) centre = np;
-
-    // kortet flyttes KUN ved første positionsbestemmelse,
-    // så brugerens eget zoom og panorering ikke overskrives
-    if (firstFix){ firstFix = false; map.setView(np, 10); render(); return; }
-    if (moved) render();
+    if (atGps) centre = np;
+    if (firstFix){ firstFix = false; movePin(np, true); return; }
+    if (moved && atGps) render();
   }, () => {}, {enableHighAccuracy:true, maximumAge:20000, timeout:20000});
 }
 </script>
