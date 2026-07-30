@@ -2,907 +2,611 @@
 <html lang="da">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Danske Attraktioner · Stampbog App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+<title>Danske Attraktioner</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0A2F51">
+<meta name="theme-color" content="#0F1720">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
-:root {
-  --bg: #0A2F51;
-  --panel: #102A47;
-  --panel-2: #153252;
-  --line: #224466;
-  --text: #E8F0F8;
-  --muted: #8FA6BB;
-  --accent: #4DADE5;
-  --success: #3BD37F;
-  --warn: #F2B740;
-  --radius: 12px;
+:root{
+  --bg:#0F1720; --panel:#151E28; --panel2:#1C2733; --line:#2A3644;
+  --text:#EEF3F8; --muted:#8A9AAB; --accent:#4DADE5; --ok:#3BD37F; --warn:#F2B740;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  display:flex;flex-direction:column;
+  height:100vh;height:100dvh;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
+/* ---------- KORT ---------- */
+#map{height:38vh;min-height:200px;flex:none;background:#0D3D5C;z-index:1}
+.leaflet-control-attribution{font-size:9px}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
+/* ---------- RADIUS-BJÆLKE ---------- */
+.radiusbar{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;background:var(--panel);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  flex:none;
 }
+.radiusbar label{font-size:13px;color:var(--muted);flex:none}
+.radiusbar input[type=range]{flex:1;accent-color:var(--accent);height:24px}
+.radiusbar output{font-size:16px;font-weight:700;min-width:64px;text-align:right}
 
-header {
-  padding: 14px 16px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 1200;
+/* ---------- TITELLINJE ---------- */
+.titlebar{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px 10px;background:var(--panel);flex:none;
 }
-
-.logo {
-  font-weight: 700;
-  font-size: 17px;
+.titlebar h1{font-size:17px;font-weight:700;letter-spacing:.01em}
+.titlebar .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.spacer{flex:1}
+.iconbtn{
+  width:40px;height:40px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--panel2);border:1px solid var(--line);
+  border-radius:11px;color:var(--text);font-size:17px;cursor:pointer;
 }
+.iconbtn.on{background:var(--accent);border-color:var(--accent);color:#08131C}
 
-.spacer { flex: 1; }
-
-.header-btn {
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  color: var(--text);
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: all .15s;
+/* ---------- LISTE ---------- */
+.listhead{
+  display:flex;align-items:baseline;gap:8px;
+  padding:4px 14px 10px;background:var(--panel);flex:none;
 }
-
-.header-btn:active {
-  background: var(--accent);
-  color: var(--bg);
+.listhead b{font-size:15px;font-weight:700}
+.listhead span{font-size:12px;color:var(--muted)}
+.list{
+  flex:1;min-height:0;overflow-y:auto;
+  padding:6px 10px 24px;background:var(--bg);
+  -webkit-overflow-scrolling:touch;
 }
-
-.container {
-  display: flex;
-  flex: 1;
-  min-height: 0;
+.card{
+  display:flex;align-items:center;gap:12px;
+  padding:9px;margin-bottom:8px;
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r);cursor:pointer;
 }
-
-#map {
-  flex: 1;
-  background: #0D3D5C;
+.card:active{border-color:var(--accent)}
+.thumb{
+  width:64px;height:64px;flex:none;border-radius:10px;
+  background:var(--panel2);overflow:hidden;position:relative;
+  display:flex;align-items:center;justify-content:center;
 }
-
-.sidebar {
-  width: 340px;
-  background: var(--panel);
-  border-left: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .ph{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em}
+.cardbody{flex:1;min-width:0}
+.cardbody .nm{font-size:15px;font-weight:600;line-height:1.25;margin-bottom:3px}
+.cardbody .mt{font-size:12px;color:var(--muted)}
+.cardbody .tags{margin-top:5px;display:flex;gap:5px;flex-wrap:wrap}
+.tag{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--panel2);color:var(--muted)}
+.tag.free{background:rgba(59,211,127,.15);color:var(--ok)}
+.carddist{font-size:13px;font-weight:600;color:var(--muted);flex:none;text-align:right}
+.badge-ok{
+  position:absolute;top:0;right:0;
+  background:var(--ok);color:#06210F;font-size:11px;font-weight:800;
+  width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+  border-bottom-left-radius:8px;
 }
+.empty{padding:36px 20px;text-align:center;color:var(--muted);font-size:13px;line-height:1.6}
 
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
-  #map {
-    flex: none;
-    height: 42vh;
-    min-height: 240px;
-  }
-  .sidebar {
-    width: 100%;
-    border-left: none;
-    border-top: 1px solid var(--line);
-    flex: 1;
-    min-height: 0;
-  }
-  .region-tabs {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 6px;
-  }
-  .region-tab {
-    padding: 8px 4px;
-    font-size: 11px;
-  }
+/* ---------- ARK (indstillinger + detalje) ---------- */
+.sheet{
+  position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:3000;display:none;align-items:flex-end;
 }
-
-.sidebar-header {
-  padding: 14px;
-  border-bottom: 1px solid var(--line);
-  flex-shrink: 0;
+.sheet.open{display:flex}
+.sheetbox{
+  width:100%;max-height:88vh;overflow-y:auto;
+  background:var(--panel);border-top-left-radius:20px;border-top-right-radius:20px;
+  padding:18px 16px calc(20px + env(safe-area-inset-bottom));
+  animation:up .22s ease;
 }
-
-.region-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheethead{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.sheethead h2{font-size:19px;font-weight:700;line-height:1.25;flex:1}
+.closebtn{
+  width:34px;height:34px;flex:none;border:none;border-radius:50%;
+  background:var(--panel2);color:var(--text);font-size:17px;cursor:pointer;
 }
-
-.region-tab {
-  padding: 10px 8px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--panel-2);
-  color: var(--text);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  transition: all .15s;
+.seclabel{
+  font-size:11px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.09em;font-weight:600;margin:18px 0 9px;
 }
+.seclabel:first-of-type{margin-top:0}
 
-.region-tab.active {
-  background: var(--accent);
-  color: var(--bg);
+/* regionsknapper i indstillinger */
+.regions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.regbtn{
+  padding:13px 8px;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--panel2);color:var(--text);
+  font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;
 }
-
-.region-tab .count {
-  display: block;
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 3px;
+.regbtn.on{background:var(--accent);border-color:var(--accent);color:#08131C}
+.regbtn small{display:block;font-size:11px;font-weight:500;opacity:.7;margin-top:3px}
+.wide{
+  width:100%;padding:13px;margin-top:9px;
+  border:1px solid var(--line);border-radius:var(--r);
+  background:var(--panel2);color:var(--text);
+  font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;
 }
-
-.search-box {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+.wide.on{background:var(--accent);border-color:var(--accent);color:#08131C}
+input[type=text]{
+  width:100%;padding:12px 14px;
+  border:1px solid var(--line);border-radius:var(--r);
+  background:var(--panel2);color:var(--text);
+  font-size:15px;font-family:inherit;
 }
+input[type=text]::placeholder{color:var(--muted)}
 
-#searchInput {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--panel-2);
-  color: var(--text);
-  font-size: 13px;
-  font-family: 'Inter', sans-serif;
+/* detaljeark */
+.hero{
+  width:100%;height:190px;border-radius:var(--r);
+  background:var(--panel2);object-fit:cover;display:block;margin-bottom:14px;
 }
-
-.range-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;
+  background:rgba(77,173,229,.16);color:var(--accent)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fact{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:11px}
+.fact .k{font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.fact .v{font-size:14px;font-weight:600}
+.btnrow{display:flex;gap:9px;margin-top:8px}
+.btn{
+  flex:1;padding:14px;border:none;border-radius:var(--r);
+  background:var(--accent);color:#08131C;
+  font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;
+  text-align:center;text-decoration:none;display:block;
 }
-
-.range-control label {
-  font-size: 11px;
-  color: var(--muted);
-  white-space: nowrap;
+.btn.alt{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.drop{
+  padding:22px;border:2px dashed var(--line);border-radius:var(--r);
+  text-align:center;font-size:13px;color:var(--muted);cursor:pointer;
 }
+.gallery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:9px}
+.gallery div{aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--panel2);position:relative}
+.gallery img{width:100%;height:100%;object-fit:cover}
+.gallery .lock{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);
+  font-size:10px;text-align:center;padding:2px}
+.note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:8px}
+.hidden{display:none!important}
+#camInput{display:none}
 
-.range-control input[type="range"] {
-  flex: 1;
-  accent-color: var(--accent);
-}
-
-.range-control output {
-  font-size: 13px;
-  font-weight: 600;
-  min-width: 40px;
-  text-align: right;
-}
-
-.showall-btn {
-  width: 100%;
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--panel-2);
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 600;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  transition: all .15s;
-}
-
-.showall-btn.active {
-  background: var(--accent);
-  color: var(--bg);
-  border-color: var(--accent);
-}
-
-.sidebar-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-}
-
-.attraction-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.attraction-item {
-  padding: 12px;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: all .15s;
-  position: relative;
-}
-
-.attraction-item:active {
-  border-color: var(--accent);
-}
-
-.att-name {
-  font-weight: 600;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-
-.att-meta {
-  display: flex;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.att-check {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 20px;
-  height: 20px;
-  border: 1px solid var(--success);
-  border-radius: 4px;
-  background: rgba(59, 211, 127, .15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-}
-
-.empty-state {
-  padding: 30px 16px;
-  text-align: center;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  z-index: 2000;
-}
-
-.modal.show {
-  display: flex;
-  align-items: flex-end;
-}
-
-.modal-content {
-  width: 100%;
-  background: var(--panel);
-  border-radius: 16px 16px 0 0;
-  padding: 20px;
-  max-height: 85vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  color: var(--text);
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.modal-image {
-  width: 100%;
-  height: 200px;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  margin-bottom: 16px;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.info-card {
-  background: var(--panel-2);
-  padding: 10px;
-  border-radius: var(--radius);
-  border: 1px solid var(--line);
-}
-
-.info-label {
-  font-size: 10px;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-
-.info-value {
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.photo-gallery {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.photo-item {
-  width: 100%;
-  aspect-ratio: 1;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.photo-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.photo-upload {
-  width: 100%;
-  padding: 30px 16px;
-  border: 2px dashed var(--line);
-  border-radius: var(--radius);
-  background: rgba(77, 173, 229, .05);
-  text-align: center;
-  cursor: pointer;
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.action-button {
-  flex: 1;
-  padding: 12px;
-  background: var(--accent);
-  color: var(--bg);
-  border: none;
-  border-radius: var(--radius);
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-}
-
-.action-button.secondary {
-  background: var(--panel-2);
-  color: var(--text);
-  border: 1px solid var(--line);
+/* desktop: kort fylder mere */
+@media(min-width:900px){
+  #map{height:52vh}
+  .list{padding-left:20px;padding-right:20px}
 }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">🗺️ Danske Attraktioner</div>
-  <div class="spacer"></div>
-  <button class="header-btn" onclick="showStats()">📊 Status</button>
-</header>
+<div id="map"></div>
 
-<div class="container">
-  <div id="map"></div>
-
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="region-tabs" id="regionTabs"></div>
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="🔍 Søg..." />
-      </div>
-      <div class="range-control">
-        <label>Radius:</label>
-        <input type="range" id="radiusSlider" min="5" max="100" value="50" step="5" />
-        <output id="radiusOutput">50 km</output>
-      </div>
-      <button id="showAllBtn" class="showall-btn">🌍 Vis alle på kortet</button>
-    </div>
-
-    <div class="sidebar-content">
-      <div class="attraction-list" id="attractionList">
-        <div class="empty-state">Indlæser...</div>
-      </div>
-    </div>
-  </aside>
+<div class="radiusbar">
+  <label>Radius</label>
+  <input type="range" id="radius" min="5" max="150" value="50" step="5">
+  <output id="radiusOut">50 km</output>
 </div>
 
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 id="modalTitle" style="margin: 0; font-size: 16px; font-weight: 700;"></h2>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+<div class="titlebar">
+  <div>
+    <h1>🗺️ Danske Attraktioner</h1>
+    <div class="sub" id="progress">–</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="iconbtn" id="allBtn" title="Vis alle">🌍</button>
+  <button class="iconbtn" id="setBtn" title="Indstillinger">⚙️</button>
+</div>
+
+<div class="listhead">
+  <b>Attraktioner i området</b>
+  <span id="listCount"></span>
+</div>
+
+<div class="list" id="list"></div>
+
+<!-- INDSTILLINGER -->
+<div class="sheet" id="setSheet">
+  <div class="sheetbox">
+    <div class="sheethead">
+      <h2>Indstillinger</h2>
+      <button class="closebtn" data-close="setSheet">✕</button>
     </div>
 
-    <img id="modalImage" class="modal-image" alt="">
+    <div class="seclabel">Landsdel</div>
+    <div class="regions" id="regions"></div>
+    <button class="wide" id="clearReg">Vis alle landsdele</button>
 
-    <div style="margin-bottom: 16px;">
-      <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px;">Detaljer</div>
-      <div class="info-grid">
-        <div class="info-card">
-          <div class="info-label">By</div>
-          <div class="info-value" id="modalCity">-</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Region</div>
-          <div class="info-value" id="modalRegion">-</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Afstand</div>
-          <div class="info-value" id="modalDistance">-</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Kategori</div>
-          <div class="info-value" id="modalCategory">-</div>
-        </div>
-      </div>
-    </div>
+    <div class="seclabel">Søg</div>
+    <input type="text" id="search" placeholder="Navn eller by…">
 
-    <div style="margin-bottom: 16px;">
-      <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px;">Mine Fotos</div>
-      <div class="photo-gallery" id="photoGallery"></div>
-      <div class="photo-upload" id="photoUpload">📸 Tag foto med GPS-data</div>
-    </div>
+    <div class="seclabel">Visning</div>
+    <button class="wide" id="onlyMissing">Vis kun dem jeg mangler</button>
 
-    <div class="action-buttons">
-      <button class="action-button" id="routeBtn">🗺️ Rutevejledning</button>
-      <button class="action-button secondary" onclick="closeModal()">Luk</button>
+    <div class="seclabel">Min status</div>
+    <div class="facts" id="statFacts"></div>
+
+    <div class="note">
+      Fotos hentes fra Wikipedia og gemmes lokalt, så de kun downloades én gang.
+      Priser og åbningstider skifter ofte — derfor linkes der til attraktionens
+      egen hjemmeside i stedet for at vise et beløb der kan være forældet.
     </div>
   </div>
 </div>
 
-<input type="file" id="cameraInput" accept="image/*" capture="environment">
+<!-- DETALJE -->
+<div class="sheet" id="detSheet">
+  <div class="sheetbox">
+    <div class="sheethead">
+      <div style="flex:1">
+        <h2 id="dName"></h2>
+        <div class="chips" id="dChips"></div>
+      </div>
+      <button class="closebtn" data-close="detSheet">✕</button>
+    </div>
+
+    <img class="hero" id="dHero" alt="">
+
+    <div class="facts">
+      <div class="fact"><div class="k">By</div><div class="v" id="dCity">–</div></div>
+      <div class="fact"><div class="k">Afstand</div><div class="v" id="dDist">–</div></div>
+      <div class="fact"><div class="k">Adgang</div><div class="v" id="dPrice">–</div></div>
+      <div class="fact"><div class="k">Landsdel</div><div class="v" id="dReg">–</div></div>
+    </div>
+
+    <div class="btnrow">
+      <a class="btn" id="dRoute" target="_blank" rel="noopener">🚗 Rutevejledning</a>
+      <a class="btn alt" id="dWeb" target="_blank" rel="noopener">🌐 Hjemmeside</a>
+    </div>
+
+    <div class="seclabel">Mine fotos</div>
+    <div class="gallery" id="dGallery"></div>
+    <div class="drop" id="dDrop">📸 Tag foto på stedet</div>
+    <div class="note" id="dGeoNote"></div>
+
+    <div class="btnrow" style="margin-top:14px">
+      <button class="btn alt" id="dVisit">Markér som besøgt</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="camInput" accept="image/*" capture="environment">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/index.min.js"></script>
-
 <script>
-const ATTRACTIONS = [
-  // FYN
-  { id: 'den-gamle-lillebeltsbro', name: 'Den Gamle Lillebeltsbro', category: 'Bro', regions: ['Fyn', 'Jylland'], lat: 55.5224, lng: 9.7553, city: 'Middelfart', price: 'Gratis', image: '🌉' },
-  { id: 'hca-barndomshjem', name: "H.C.A's Barndomshjem", category: 'Museum', regions: ['Fyn'], lat: 55.1201, lng: 10.1967, city: 'Odense', price: 'Gratis', image: '🏠' },
-  { id: 'egeskov-slot', name: 'Egeskov Slot', category: 'Slot', regions: ['Fyn'], lat: 55.1146, lng: 10.4139, city: 'Kværndrup', price: '250 kr', image: '🏰' },
-  { id: 'storebeltbroen', name: 'Storebæltbroen', category: 'Bro', regions: ['Fyn', 'Sjælland'], lat: 55.3313, lng: 10.9231, city: 'Mellem byerne', price: 'Gratis', image: '🌉' },
-  { id: 'nyborg-slot', name: 'Nyborg Slot', category: 'Slot', regions: ['Fyn'], lat: 55.2994, lng: 10.7868, city: 'Nyborg', price: '150 kr', image: '🏰' },
-  { id: 'jernbanemuseet', name: 'Jernbanemuseet', category: 'Museum', regions: ['Fyn'], lat: 55.1201, lng: 10.1967, city: 'Odense', price: '110 kr', image: '🚂' },
-  { id: 'fyns-landsby', name: 'Den Fynske Landsby', category: 'Museum', regions: ['Fyn'], lat: 55.1046, lng: 10.3881, city: 'Odense', price: '210 kr', image: '🏘️' },
-  { id: 'fyns-hoved', name: 'Fyns Hoved', category: 'Natur', regions: ['Fyn'], lat: 55.3412, lng: 10.1234, city: 'Martofte', price: 'Gratis', image: '⛰️' },
-  { id: 'aebelo', name: 'Ænbelo', category: 'Natur', regions: ['Fyn'], lat: 55.3691, lng: 10.0556, city: 'Bogense', price: 'Gratis', image: '🏞️' },
-  { id: 'svanningebakkerne', name: 'Svanningebakkerne', category: 'Natur', regions: ['Fyn'], lat: 55.0821, lng: 9.8141, city: 'Faaborg', price: 'Gratis', image: '⛰️' },
+const ATTRACTIONS = [{"id":"den-gamle-lillebeltsbro","name":"Den Gamle Lillebæltsbro","cat":"Bro","reg":["Fyn","Jylland"],"lat":55.5224,"lng":9.7553,"city":"Middelfart","price":"Gratis","wiki":"Den gamle Lillebæltsbro","web":""},{"id":"hca-barndomshjem","name":"H.C.A's Barndomshjem","cat":"Museum","reg":["Fyn"],"lat":55.1201,"lng":10.1967,"city":"Odense","price":"Gratis","wiki":"H.C. Andersens Barndomshjem","web":"https://hcandersenshus.dk"},{"id":"egeskov-slot","name":"Egeskov Slot","cat":"Slot","reg":["Fyn"],"lat":55.1146,"lng":10.4139,"city":"Kværndrup","price":"Se hjemmeside","wiki":"Egeskov Slot","web":"https://www.egeskov.dk"},{"id":"storebeltbroen","name":"Storebæltsbroen","cat":"Bro","reg":["Fyn","Sjælland"],"lat":55.3313,"lng":10.9231,"city":"Sjælland / Fyn","price":"Gratis","wiki":"Storebæltsforbindelsen","web":"https://www.storebaelt.dk"},{"id":"nyborg-slot","name":"Nyborg Slot","cat":"Slot","reg":["Fyn"],"lat":55.2994,"lng":10.7868,"city":"Nyborg","price":"Se hjemmeside","wiki":"Nyborg Slot","web":"https://nyborgslot.dk"},{"id":"jernbanemuseet","name":"Jernbanemuseet","cat":"Museum","reg":["Fyn"],"lat":55.1201,"lng":10.1967,"city":"Odense","price":"Se hjemmeside","wiki":"Danmarks Jernbanemuseum","web":"https://www.jernbanemuseet.dk"},{"id":"fyns-landsby","name":"Den Fynske Landsby","cat":"Museum","reg":["Fyn"],"lat":55.1046,"lng":10.3881,"city":"Odense","price":"Se hjemmeside","wiki":"Den Fynske Landsby","web":"https://denfynskelandsby.dk"},{"id":"fyns-hoved","name":"Fyns Hoved","cat":"Natur","reg":["Fyn"],"lat":55.3412,"lng":10.1234,"city":"Martofte","price":"Gratis","wiki":"Fyns Hoved","web":""},{"id":"aebelo","name":"Æbelø","cat":"Natur","reg":["Fyn"],"lat":55.3691,"lng":10.0556,"city":"Bogense","price":"Gratis","wiki":"Æbelø","web":""},{"id":"svanningebakkerne","name":"Svanninge Bakker","cat":"Natur","reg":["Fyn"],"lat":55.0821,"lng":9.8141,"city":"Faaborg","price":"Gratis","wiki":"Svanninge Bakker","web":""},{"id":"mennesket-ved-havet","name":"Mennesket ved Havet","cat":"Statue","reg":["Jylland"],"lat":56.1669,"lng":8.2128,"city":"Esbjerg","price":"Gratis","wiki":"Mennesket ved Havet","web":""},{"id":"dybbol-molle","name":"Dybbøl Mølle","cat":"Monument","reg":["Jylland"],"lat":55.1594,"lng":9.7642,"city":"Dybbøl Banke","price":"Gratis","wiki":"Dybbøl Mølle","web":""},{"id":"legoland","name":"Legoland","cat":"Forlystelse","reg":["Jylland"],"lat":55.753,"lng":9.1169,"city":"Billund","price":"Se hjemmeside","wiki":"Legoland Billund","web":"https://www.legoland.dk"},{"id":"rabserg-mille","name":"Råbjerg Mile","cat":"Natur","reg":["Jylland"],"lat":57.3189,"lng":10.1542,"city":"Skagen","price":"Gratis","wiki":"Råbjerg Mile","web":""},{"id":"den-gamle-by","name":"Den Gamle By","cat":"Museum","reg":["Jylland"],"lat":56.1565,"lng":10.1868,"city":"Aarhus","price":"Gratis","wiki":"Den Gamle By","web":"https://www.dengamleby.dk"},{"id":"himmelbjergtarnet","name":"Himmelbjergtårnet","cat":"Monument","reg":["Jylland"],"lat":56.2614,"lng":9.6894,"city":"Ry","price":"Gratis","wiki":"Himmelbjerget","web":""},{"id":"mols-bjerge","name":"Mols Bjerge","cat":"Natur","reg":["Jylland"],"lat":56.2253,"lng":10.3594,"city":"Syddjurs","price":"Gratis","wiki":"Nationalpark Mols Bjerge","web":"https://nationalparkmolsbjerge.dk"},{"id":"grenen","name":"Grenen","cat":"Natur","reg":["Jylland"],"lat":57.4375,"lng":10.5833,"city":"Skagen","price":"Gratis","wiki":"Grenen","web":""},{"id":"jellingstienene","name":"Jellingstenene","cat":"Monument","reg":["Jylland"],"lat":55.8808,"lng":9.425,"city":"Jelling","price":"Gratis","wiki":"Jellingstenene","web":""},{"id":"den-uendelige-bro","name":"Den Uendelige Bro","cat":"Kunstværk","reg":["Jylland"],"lat":56.1467,"lng":10.1889,"city":"Aarhus","price":"Gratis","wiki":"Den uendelige bro","web":""},{"id":"rubbjerg-knude-fyr","name":"Rubjerg Knude Fyr","cat":"Monument","reg":["Jylland"],"lat":57.3389,"lng":9.6733,"city":"Lønstrup","price":"Gratis","wiki":"Rubjerg Knude Fyr","web":""},{"id":"aros-kunstmuseum","name":"ARoS Kunstmuseum","cat":"Museum","reg":["Jylland"],"lat":56.1551,"lng":10.1999,"city":"Aarhus","price":"Se hjemmeside","wiki":"ARoS Aarhus Kunstmuseum","web":"https://www.aros.dk"},{"id":"ribe-domkirke","name":"Ribe Domkirke","cat":"Kirke","reg":["Jylland"],"lat":55.3278,"lng":8.7589,"city":"Ribe","price":"Gratis","wiki":"Ribe Domkirke","web":"https://www.ribe-domkirke.dk"},{"id":"bunkermuseum-hanstholm","name":"Bunkermuseum Hanstholm","cat":"Museum","reg":["Jylland"],"lat":56.9763,"lng":8.615,"city":"Hanstholm","price":"Se hjemmeside","wiki":"Museumscenter Hanstholm","web":"https://museumthy.dk"},{"id":"fjordenhus","name":"Fjordenhus","cat":"Museum","reg":["Jylland"],"lat":55.6794,"lng":9.4289,"city":"Vejle","price":"Se hjemmeside","wiki":"Fjordenhus","web":"https://fjordenhus.dk"},{"id":"muldybunkerne","name":"Muldyrbunkerne","cat":"Natur","reg":["Jylland"],"lat":55.5333,"lng":8.0944,"city":"Blåvand","price":"Gratis","wiki":"","web":""},{"id":"koldinghus","name":"Koldinghus","cat":"Slot","reg":["Jylland"],"lat":55.4917,"lng":9.4833,"city":"Kolding","price":"Se hjemmeside","wiki":"Koldinghus","web":"https://www.koldinghus.dk"},{"id":"ejer-bavnehoj","name":"Ejer Bavnehøj","cat":"Natur","reg":["Jylland"],"lat":56.0889,"lng":9.6944,"city":"Skanderborg","price":"Gratis","wiki":"Ejer Bavnehøj","web":""},{"id":"fregattan-jylland","name":"Fregatten Jylland","cat":"Museum","reg":["Jylland"],"lat":56.4694,"lng":10.6969,"city":"Ebeltoft","price":"Se hjemmeside","wiki":"Fregatten Jylland","web":"https://fregatten-jylland.dk"},{"id":"aalborgtarnet","name":"Aalborgtårnet","cat":"Monument","reg":["Jylland"],"lat":57.0489,"lng":9.9159,"city":"Aalborg","price":"Gratis","wiki":"Aalborgtårnet","web":""},{"id":"spottrup-borg","name":"Spøttrup Borg","cat":"Slot","reg":["Jylland"],"lat":56.8228,"lng":9.1678,"city":"Spøttrup","price":"Se hjemmeside","wiki":"Spøttrup Borg","web":""},{"id":"det-gamle-radhus","name":"Det Gamle Rådhus","cat":"Museum","reg":["Jylland"],"lat":56.4694,"lng":10.6969,"city":"Ebeltoft","price":"Gratis","wiki":"","web":""},{"id":"den-genfundne-bro","name":"Den Genfundne Bro","cat":"Monument","reg":["Jylland"],"lat":55.6417,"lng":9.825,"city":"Brædstrup","price":"Gratis","wiki":"Den Genfundne Bro","web":""},{"id":"moesgaard-museum","name":"Moesgaard Museum","cat":"Museum","reg":["Jylland"],"lat":56.1186,"lng":10.1876,"city":"Højbjerg","price":"Gratis","wiki":"Moesgaard Museum","web":"https://www.moesgaardmuseum.dk"},{"id":"tirpitz","name":"Tirpitz","cat":"Museum","reg":["Jylland"],"lat":55.5639,"lng":8.0944,"city":"Blåvand","price":"Se hjemmeside","wiki":"Tirpitz (museum)","web":"https://www.tirpitz.dk"},{"id":"bulbjerg","name":"Bulbjerg","cat":"Natur","reg":["Jylland"],"lat":56.8361,"lng":8.6278,"city":"Frøstrup","price":"Gratis","wiki":"Bulbjerg","web":""},{"id":"kalo-slotsruin","name":"Kalø Slotsruin","cat":"Monument","reg":["Jylland"],"lat":56.3556,"lng":10.5875,"city":"Rønde","price":"Gratis","wiki":"Kalø Slot","web":""},{"id":"klimoller-strand","name":"Klitmøller Strand","cat":"Natur","reg":["Jylland"],"lat":56.9486,"lng":8.5639,"city":"Thisted","price":"Gratis","wiki":"Klitmøller","web":""},{"id":"jomfru-ane-gade","name":"Jomfru Ane Gade","cat":"Bydel","reg":["Jylland"],"lat":57.0489,"lng":9.9159,"city":"Aalborg","price":"Gratis","wiki":"Jomfru Ane Gade","web":""},{"id":"aarhus-radhus","name":"Aarhus Rådhus","cat":"Museum","reg":["Jylland"],"lat":56.152,"lng":10.2059,"city":"Aarhus","price":"Gratis","wiki":"Aarhus Rådhus","web":""},{"id":"faengslet","name":"Fængslet","cat":"Museum","reg":["Jylland"],"lat":55.8617,"lng":9.5878,"city":"Horsens","price":"Se hjemmeside","wiki":"Horsens Statsfængsel","web":"https://faengslet.dk"},{"id":"rold-skov","name":"Rold Skov","cat":"Natur","reg":["Jylland"],"lat":56.6811,"lng":9.8111,"city":"Himmerland","price":"Gratis","wiki":"Rold Skov","web":""},{"id":"lokken-strand","name":"Løkken Strand","cat":"Natur","reg":["Jylland"],"lat":57.3722,"lng":8.6764,"city":"Løkken","price":"Gratis","wiki":"Løkken","web":""},{"id":"nationalpark-vadehavet","name":"Nationalpark Vadehavet","cat":"Natur","reg":["Jylland"],"lat":55.3333,"lng":8.6667,"city":"Sydvest- og Sønderjylland","price":"Gratis","wiki":"Nationalpark Vadehavet","web":"https://nationalparkvadehavet.dk"},{"id":"monsted-kalkgruber","name":"Mønsted Kalkgruber","cat":"Museum","reg":["Jylland"],"lat":56.4083,"lng":9.8083,"city":"Mønsted","price":"Se hjemmeside","wiki":"Mønsted Kalkgruber","web":"https://monsted-kalkgruber.dk"},{"id":"skulpturparken-blokhus","name":"Skulpturparken Blokhus","cat":"Kunstværk","reg":["Jylland"],"lat":57.2053,"lng":8.6056,"city":"Blokhus","price":"Gratis","wiki":"","web":""},{"id":"lille-vildmose","name":"Lille Vildmose","cat":"Natur","reg":["Jylland"],"lat":56.8833,"lng":10.3167,"city":"Storvorde","price":"Gratis","wiki":"Lille Vildmose","web":"https://lillevildmose.dk"},{"id":"skovtarnet","name":"Skovtårnet","cat":"Monument","reg":["Sjælland"],"lat":55.7357,"lng":12.5639,"city":"Rønnede","price":"Gratis","wiki":"Skovtårnet","web":"https://campadventure.dk"},{"id":"amalienborg","name":"Amalienborg","cat":"Slot","reg":["Sjælland"],"lat":55.6821,"lng":12.5866,"city":"København","price":"Gratis","wiki":"Amalienborg","web":"https://www.kongernessamling.dk"},{"id":"rundetarn","name":"Rundetaarn","cat":"Monument","reg":["Sjælland"],"lat":55.6797,"lng":12.5743,"city":"København","price":"Se hjemmeside","wiki":"Rundetårn","web":"https://www.rundetaarn.dk"},{"id":"nyhavn","name":"Nyhavn","cat":"Bydel","reg":["Sjælland"],"lat":55.6794,"lng":12.5898,"city":"København","price":"Gratis","wiki":"Nyhavn","web":""},{"id":"de-6-glemte-kaemper","name":"De 6 Glemte Kæmper","cat":"Kunstværk","reg":["Sjælland"],"lat":55.6667,"lng":12.4667,"city":"Vestegnen","price":"Gratis","wiki":"","web":""},{"id":"tivoli","name":"Tivoli","cat":"Forlystelse","reg":["Sjælland"],"lat":55.6733,"lng":12.5673,"city":"København","price":"Se hjemmeside","wiki":"Tivoli (København)","web":"https://www.tivoli.dk"},{"id":"marmorkirken","name":"Marmorkirken","cat":"Kirke","reg":["Sjælland"],"lat":55.6898,"lng":12.5809,"city":"København","price":"Gratis","wiki":"Frederiks Kirke","web":"https://www.marmorkirken.dk"},{"id":"botanisk-have","name":"Botanisk Have","cat":"Have","reg":["Sjælland"],"lat":55.7034,"lng":12.5631,"city":"København","price":"Gratis","wiki":"Botanisk Have (København)","web":"https://botanik.snm.ku.dk"},{"id":"glyptoteket","name":"Glyptoteket","cat":"Museum","reg":["Sjælland"],"lat":55.6729,"lng":12.5634,"city":"København","price":"Se hjemmeside","wiki":"Ny Carlsberg Glyptotek","web":"https://www.glyptoteket.dk"},{"id":"kronborg-slot","name":"Kronborg Slot","cat":"Slot","reg":["Sjælland"],"lat":56.0412,"lng":12.6278,"city":"Helsingør","price":"Se hjemmeside","wiki":"Kronborg","web":"https://www.kronborg.dk"},{"id":"frederiksborg-slot","name":"Frederiksborg Slot","cat":"Slot","reg":["Sjælland"],"lat":55.8836,"lng":12.3156,"city":"Hillerød","price":"Se hjemmeside","wiki":"Frederiksborg Slot","web":"https://dnm.dk"},{"id":"vor-frelsers-kirke","name":"Vor Frelsers Kirke","cat":"Kirke","reg":["Sjælland"],"lat":55.6879,"lng":12.587,"city":"København","price":"Gratis","wiki":"Vor Frelsers Kirke","web":"https://vorfrelserskirke.dk"},{"id":"stevns-klint","name":"Stevns Klint","cat":"Natur","reg":["Sjælland"],"lat":55.3111,"lng":12.395,"city":"Stevns","price":"Gratis","wiki":"Stevns Klint","web":"https://stevnsklint.dk"},{"id":"nationalmuseet","name":"Nationalmuseet","cat":"Museum","reg":["Sjælland"],"lat":55.6728,"lng":12.5717,"city":"København","price":"Gratis","wiki":"Nationalmuseet","web":"https://natmus.dk"},{"id":"rosenberg-slot","name":"Rosenborg Slot","cat":"Slot","reg":["Sjælland"],"lat":55.6827,"lng":12.5811,"city":"København","price":"Se hjemmeside","wiki":"Rosenborg Slot","web":"https://www.kongernessamling.dk"},{"id":"den-lille-havfrue","name":"Den Lille Havfrue","cat":"Statue","reg":["Sjælland"],"lat":55.6805,"lng":12.5986,"city":"København","price":"Gratis","wiki":"Den lille havfrue","web":""},{"id":"nyboder","name":"Nyboder","cat":"Bydel","reg":["Sjælland"],"lat":55.6917,"lng":12.57,"city":"København","price":"Gratis","wiki":"Nyboder","web":""},{"id":"skjoldungernes-land","name":"Skjoldungernes Land","cat":"Museum","reg":["Sjælland"],"lat":55.5481,"lng":12.0856,"city":"Roskilde Fjord","price":"Se hjemmeside","wiki":"Nationalpark Skjoldungernes Land","web":"https://nationalparkskjoldungernesland.dk"},{"id":"bakken","name":"Bakken","cat":"Forlystelse","reg":["Sjælland"],"lat":55.7753,"lng":12.5842,"city":"Klampenborg","price":"Gratis","wiki":"Dyrehavsbakken","web":"https://www.bakken.dk"},{"id":"faxe-kalkbrud","name":"Faxe Kalkbrud","cat":"Museum","reg":["Sjælland"],"lat":55.2722,"lng":12.2861,"city":"Faxe","price":"Se hjemmeside","wiki":"Faxe Kalkbrud","web":""},{"id":"det-kongelige-teater","name":"Det Kongelige Teater","cat":"Museum","reg":["Sjælland"],"lat":55.6786,"lng":12.5819,"city":"København","price":"Se hjemmeside","wiki":"Det Kongelige Teater","web":"https://kglteater.dk"},{"id":"grundtvigs-kirke","name":"Grundtvigs Kirke","cat":"Kirke","reg":["Sjælland"],"lat":55.7311,"lng":12.4758,"city":"København","price":"Gratis","wiki":"Grundtvigs Kirke","web":"https://grundtvigskirke.dk"},{"id":"rosneas-fyr","name":"Røsnæs Fyr","cat":"Monument","reg":["Sjælland"],"lat":55.5347,"lng":11.6278,"city":"Kalundborg","price":"Gratis","wiki":"Røsnæs Fyr","web":""},{"id":"museet-for-sofart","name":"Museet for Søfart","cat":"Museum","reg":["Sjælland"],"lat":56.0381,"lng":12.6208,"city":"Helsingør","price":"Se hjemmeside","wiki":"M/S Museet for Søfart","web":"https://mfs.dk"},{"id":"tystrup-bavelse","name":"Tystrup-Bavelse","cat":"Natur","reg":["Sjælland"],"lat":55.4833,"lng":11.7333,"city":"Tystrup","price":"Gratis","wiki":"Tystrup Sø","web":""},{"id":"vikingeskibsmuseet","name":"Vikingeskibsmuseet","cat":"Museum","reg":["Sjælland"],"lat":55.6442,"lng":12.0969,"city":"Roskilde","price":"Se hjemmeside","wiki":"Vikingeskibsmuseet","web":"https://www.vikingeskibsmuseet.dk"},{"id":"arken-museum","name":"Arken Museum","cat":"Museum","reg":["Sjælland"],"lat":55.6122,"lng":12.4381,"city":"Ishøj","price":"Se hjemmeside","wiki":"Arken Museum for Moderne Kunst","web":"https://www.arken.dk"},{"id":"kastellet","name":"Kastellet","cat":"Slot","reg":["Sjælland"],"lat":55.6917,"lng":12.57,"city":"København","price":"Gratis","wiki":"Kastellet (København)","web":""},{"id":"mons-klint","name":"Møns Klint","cat":"Natur","reg":["Øerne"],"lat":54.9379,"lng":12.4517,"city":"Borre, Møn","price":"Gratis","wiki":"Møns Klint","web":"https://www.moensklint.dk"},{"id":"christiansborg-slot","name":"Christiansborg Slot","cat":"Slot","reg":["Øerne"],"lat":55.674,"lng":12.5778,"city":"København","price":"Se hjemmeside","wiki":"Christiansborg","web":"https://www.kongeligeslotte.dk"},{"id":"eklodalen","name":"Ekkodalen","cat":"Natur","reg":["Øerne"],"lat":55.2245,"lng":14.9389,"city":"Almindingen, Bornholm","price":"Gratis","wiki":"Ekkodalen","web":""},{"id":"dodekalitten","name":"Dodekalitten","cat":"Kunstværk","reg":["Øerne"],"lat":55.119,"lng":14.9389,"city":"Glentehøj, Lolland","price":"Gratis","wiki":"Dodekalitten","web":"https://dodekalitten.dk"},{"id":"hammershus","name":"Hammershus","cat":"Slot","reg":["Øerne"],"lat":55.2265,"lng":14.8083,"city":"Allinge, Bornholm","price":"Gratis","wiki":"Hammershus","web":"https://hammershus.dk"},{"id":"osterlars-rundkirke","name":"Østerlars Rundkirke","cat":"Kirke","reg":["Øerne"],"lat":55.1917,"lng":14.9417,"city":"Gudhjem, Bornholm","price":"Se hjemmeside","wiki":"Østerlars Kirke","web":""},{"id":"christania","name":"Christiania","cat":"Bydel","reg":["Øerne"],"lat":55.672,"lng":12.6419,"city":"København, Amager","price":"Gratis","wiki":"Christiania","web":""},{"id":"ducodde-strand","name":"Dueodde Strand","cat":"Natur","reg":["Øerne"],"lat":55.0631,"lng":14.9756,"city":"Nexø, Bornholm","price":"Gratis","wiki":"Dueodde","web":""},{"id":"valdemars-slot","name":"Valdemars Slot","cat":"Slot","reg":["Øerne"],"lat":54.9483,"lng":11.5528,"city":"Svendborg, Tåsinge","price":"Se hjemmeside","wiki":"Valdemars Slot","web":"https://www.valdemarsslot.dk"},{"id":"opalsoen","name":"Opalsøen","cat":"Natur","reg":["Øerne"],"lat":55.1333,"lng":14.9389,"city":"Allinge, Bornholm","price":"Gratis","wiki":"Opalsøen","web":""},{"id":"anholt-fyr","name":"Anholt Fyr","cat":"Monument","reg":["Øerne"],"lat":56.7239,"lng":11.5089,"city":"Ørkenen, Anholt","price":"Gratis","wiki":"Anholt Fyr","web":""},{"id":"maribo-domkirke","name":"Maribo Domkirke","cat":"Kirke","reg":["Øerne"],"lat":54.7753,"lng":11.5156,"city":"Maribo, Lolland","price":"Se hjemmeside","wiki":"Maribo Domkirke","web":""},{"id":"helligdomsklipperne","name":"Helligdomsklipperne","cat":"Natur","reg":["Øerne"],"lat":55.1917,"lng":14.9417,"city":"Gudhjem, Bornholm","price":"Gratis","wiki":"Helligdomsklipperne","web":""},{"id":"bispechuen","name":"Bispehuen","cat":"Natur","reg":["Øerne"],"lat":56.3186,"lng":8.8408,"city":"Stendalgraven, Fur","price":"Gratis","wiki":"","web":""},{"id":"gedser-odde","name":"Gedser Odde","cat":"Natur","reg":["Øerne"],"lat":54.5669,"lng":11.9386,"city":"Gedser, Falster","price":"Gratis","wiki":"Gedser Odde","web":""},{"id":"hca-hus","name":"H.C. Andersens Hus","cat":"Museum","reg":["Fyn"],"lat":55.3972,"lng":10.3897,"city":"Odense","price":"Se hjemmeside","wiki":"H.C. Andersens Hus","web":"https://hcandersenshus.dk"},{"id":"tilsandede-kirke","name":"Den Tilsandede Kirke","cat":"Kirke","reg":["Jylland"],"lat":57.7069,"lng":10.5556,"city":"Skagen","price":"Se hjemmeside","wiki":"Den Tilsandede Kirke","web":""},{"id":"sneglehuset","name":"Sneglehuset","cat":"Kunst","reg":["Jylland"],"lat":56.7017,"lng":8.2181,"city":"Thyborøn","price":"Se hjemmeside","wiki":"Sneglehuset","web":""},{"id":"fredericia-vold","name":"Fredericia Vold","cat":"Monument","reg":["Jylland"],"lat":55.5647,"lng":9.7519,"city":"Fredericia","price":"Se hjemmeside","wiki":"Fredericia Vold","web":""},{"id":"operaen","name":"Operaen","cat":"Arkitektur","reg":["Sjælland"],"lat":55.6817,"lng":12.6008,"city":"København","price":"Se hjemmeside","wiki":"Operaen (København)","web":"https://kglteater.dk"},{"id":"dyrehaven","name":"Jægersborg Dyrehave","cat":"Natur","reg":["Sjælland"],"lat":55.7853,"lng":12.5711,"city":"Klampenborg","price":"Gratis","wiki":"Jægersborg Dyrehave","web":""},{"id":"louisiana","name":"Louisiana Museum","cat":"Museum","reg":["Sjælland"],"lat":55.9694,"lng":12.5975,"city":"Humlebæk","price":"Se hjemmeside","wiki":"Louisiana (kunstmuseum)","web":"https://louisiana.dk"},{"id":"vor-frue-kalundborg","name":"Vor Frue Kirke","cat":"Kirke","reg":["Sjælland"],"lat":55.6797,"lng":11.0608,"city":"Kalundborg","price":"Se hjemmeside","wiki":"Vor Frue Kirke (Kalundborg)","web":""},{"id":"store-taarn","name":"Store Tårn","cat":"Monument","reg":["Øerne"],"lat":55.3194,"lng":15.1875,"city":"Christiansø, Ertholmene","price":"Se hjemmeside","wiki":"Christiansø","web":""},{"id":"laeso-saltsyderi","name":"Læsø Saltsyderi","cat":"Museum","reg":["Øerne"],"lat":57.2486,"lng":11.025,"city":"Byrum, Læsø","price":"Se hjemmeside","wiki":"Læsø Saltsyderi","web":"https://www.saltsyderiet.dk"}];
+</script>
+<script>
+const REGIONS = ['Jylland','Fyn','Sjælland','Øerne'];
+const CAT_COLOR = {
+  Slot:'#C88CE8', Museum:'#4DADE5', Natur:'#3BD37F', Kirke:'#E8C05A',
+  Bro:'#7FB3D5', Monument:'#F2B740', Kunst:'#F28B82', Skulptur:'#F28B82',
+  Strand:'#5AD3D1', Forlystelse:'#FF9E6B', Ruin:'#B0A08C',
+  Arkitektur:'#9AA7F5', Fyrtårn:'#E8C05A', Have:'#3BD37F',
+  Bydel:'#A0AEC0', Bykvarter:'#A0AEC0', Statue:'#F28B82'
+};
 
-  // JYLLAND
-  { id: 'mennesket-ved-havet', name: 'Mennesket ved Havet', category: 'Statue', regions: ['Jylland'], lat: 56.1669, lng: 8.2128, city: 'Esbjerg', price: 'Gratis', image: '🗿' },
-  { id: 'dybbol-molle', name: 'Dybbøl Mølle', category: 'Monument', regions: ['Jylland'], lat: 55.1594, lng: 9.7642, city: 'Dybbøl Banke', price: 'Gratis', image: '🏛️' },
-  { id: 'legoland', name: 'LEGOLAND Billund', category: 'Forlystelse', regions: ['Jylland'], lat: 55.7530, lng: 9.1169, city: 'Billund', price: '699 kr', image: '🎡' },
-  { id: 'rabserg-mille', name: 'Råbjerg Mile', category: 'Natur', regions: ['Jylland'], lat: 57.3189, lng: 10.1542, city: 'Skagen', price: 'Gratis', image: '⛰️' },
-  { id: 'den-gamle-by', name: 'Den Gamle By', category: 'Museum', regions: ['Jylland'], lat: 56.1565, lng: 10.1868, city: 'Aarhus', price: 'Gratis', image: '🏘️' },
-  { id: 'himmelbjergtarnet', name: 'Himmelbjertårnet', category: 'Monument', regions: ['Jylland'], lat: 56.2614, lng: 9.6894, city: 'Ry', price: 'Gratis', image: '🗼' },
-  { id: 'mols-bjerge', name: 'Mols Bjerge', category: 'Natur', regions: ['Jylland'], lat: 56.2253, lng: 10.3594, city: 'Syddjurs', price: 'Gratis', image: '⛰️' },
-  { id: 'grenen', name: 'Grenen', category: 'Natur', regions: ['Jylland'], lat: 57.4375, lng: 10.5833, city: 'Skagen', price: 'Gratis', image: '🌊' },
-  { id: 'jellingstienene', name: 'Jelling Stenene', category: 'Monument', regions: ['Jylland'], lat: 55.8808, lng: 9.4250, city: 'Jelling', price: 'Gratis', image: '🗿' },
-  { id: 'den-uendelige-bro', name: 'Den Uendelige Bro', category: 'Kunstværk', regions: ['Jylland'], lat: 56.1467, lng: 10.1889, city: 'Aarhus', price: 'Gratis', image: '🎨' },
-  { id: 'rubbjerg-knude-fyr', name: 'Rubbjerg Knude Fyr', category: 'Monument', regions: ['Jylland'], lat: 57.3389, lng: 9.6733, city: 'Løenstrup', price: 'Gratis', image: '🗼' },
-  { id: 'aros-kunstmuseum', name: 'ARoS Kunstmuseum', category: 'Museum', regions: ['Jylland'], lat: 56.1551, lng: 10.1999, city: 'Aarhus', price: '165 kr', image: '🎨' },
-  { id: 'ribe-domkirke', name: 'Ribe Domkirke', category: 'Kirke', regions: ['Jylland'], lat: 55.3278, lng: 8.7589, city: 'Ribe', price: 'Gratis', image: '⛪' },
-  { id: 'bunkermuseum-hanstholm', name: 'Bunkermuseum Hanstholm', category: 'Museum', regions: ['Jylland'], lat: 56.9763, lng: 8.6150, city: 'Hanstholm', price: '140 kr', image: '🏛️' },
-  { id: 'fjordenhus', name: 'Fjordenhus', category: 'Museum', regions: ['Jylland'], lat: 55.6794, lng: 9.4289, city: 'Vejle', price: '150 kr', image: '🏠' },
-  { id: 'muldybunkerne', name: 'Muldybunkerne', category: 'Natur', regions: ['Jylland'], lat: 55.5333, lng: 8.0944, city: 'Blåvand', price: 'Gratis', image: '🏞️' },
-  { id: 'koldinghus', name: 'Koldinghus', category: 'Slot', regions: ['Jylland'], lat: 55.4917, lng: 9.4833, city: 'Kolding', price: '130 kr', image: '🏰' },
-  { id: 'ejer-bavnehoj', name: 'Ejer Bavnehøj', category: 'Natur', regions: ['Jylland'], lat: 56.0889, lng: 9.6944, city: 'Skanderborg', price: 'Gratis', image: '⛰️' },
-  { id: 'fregattan-jylland', name: 'Fregattan Jylland', category: 'Museum', regions: ['Jylland'], lat: 56.4694, lng: 10.6969, city: 'Ebeltoft', price: '160 kr', image: '🚢' },
-  { id: 'aalborgtarnet', name: 'Aalborgtårnet', category: 'Monument', regions: ['Jylland'], lat: 57.0489, lng: 9.9159, city: 'Aalborg', price: 'Gratis', image: '🗼' },
-  { id: 'spottrup-borg', name: 'Spøttrup Borg', category: 'Slot', regions: ['Jylland'], lat: 56.8228, lng: 9.1678, city: 'Spøttrup', price: '110 kr', image: '🏰' },
-  { id: 'det-gamle-radhus', name: 'Det Gamle Radhus', category: 'Museum', regions: ['Jylland'], lat: 56.4694, lng: 10.6969, city: 'Ebeltoft', price: 'Gratis', image: '🏛️' },
-  { id: 'den-genfundne-bro', name: 'Den Genfundne Bro', category: 'Monument', regions: ['Jylland'], lat: 55.6417, lng: 9.8250, city: 'Brædstrup', price: 'Gratis', image: '🌉' },
-  { id: 'moesgaard-museum', name: 'Moesgård Museum', category: 'Museum', regions: ['Jylland'], lat: 56.1186, lng: 10.1876, city: 'Aarhus', price: 'Gratis', image: '🏛️' },
-  { id: 'tirpitz', name: 'Tirpitz', category: 'Museum', regions: ['Jylland'], lat: 55.5639, lng: 8.0944, city: 'Blåvand', price: '135 kr', image: '🏛️' },
-  { id: 'bulbjerg', name: 'Bulbjerg', category: 'Natur', regions: ['Jylland'], lat: 56.8361, lng: 8.6278, city: 'Frøstrup', price: 'Gratis', image: '⛰️' },
-  { id: 'kalo-slotsruin', name: 'Kalo Slotsruin', category: 'Monument', regions: ['Jylland'], lat: 56.3556, lng: 10.5875, city: 'Rende', price: 'Gratis', image: '🏰' },
-  { id: 'klimoller-strand', name: 'Klimoller Strand', category: 'Natur', regions: ['Jylland'], lat: 56.9486, lng: 8.5639, city: 'Thisted', price: 'Gratis', image: '🏖️' },
-  { id: 'jomfru-ane-gade', name: 'Jomfru Ane Gade', category: 'Bydel', regions: ['Jylland'], lat: 57.0489, lng: 9.9159, city: 'Aalborg', price: 'Gratis', image: '🏘️' },
-  { id: 'aarhus-radhus', name: 'Aarhus Radhus', category: 'Museum', regions: ['Jylland'], lat: 56.1520, lng: 10.2059, city: 'Aarhus', price: 'Gratis', image: '🏛️' },
-  { id: 'faengslet', name: 'Fængslet', category: 'Museum', regions: ['Jylland'], lat: 55.8617, lng: 9.5878, city: 'Horsens', price: '130 kr', image: '🏛️' },
-  { id: 'rold-skov', name: 'Rold Skov', category: 'Natur', regions: ['Jylland'], lat: 56.6811, lng: 9.8111, city: 'Himmerland', price: 'Gratis', image: '🌲' },
-  { id: 'lokken-strand', name: 'Løkken Strand', category: 'Natur', regions: ['Jylland'], lat: 57.3722, lng: 8.6764, city: 'Løkken', price: 'Gratis', image: '🏖️' },
-  { id: 'nationalpark-vadehavet', name: 'Nationalpark Vadehavet', category: 'Natur', regions: ['Jylland'], lat: 55.3333, lng: 8.6667, city: 'Sydvest-Jylland', price: 'Gratis', image: '🏞️' },
-  { id: 'monsted-kalkgruber', name: 'Monsted Kalkgruber', category: 'Museum', regions: ['Jylland'], lat: 56.4083, lng: 9.8083, city: 'Monsted', price: '120 kr', image: '🏔️' },
-  { id: 'skulpturparken-blokhus', name: 'Skulpturparken Blokhus', category: 'Kunstværk', regions: ['Jylland'], lat: 57.2053, lng: 8.6056, city: 'Blokhus', price: 'Gratis', image: '🗿' },
-  { id: 'lille-vildmose', name: 'Lille Vildmose', category: 'Natur', regions: ['Jylland'], lat: 56.8833, lng: 10.3167, city: 'Storvorde', price: 'Gratis', image: '🌿' },
-  { id: 'givskud-zoo', name: 'Givskud Zoo', category: 'Zoo', regions: ['Jylland'], lat: 55.6794, lng: 8.9569, city: 'Givskud', price: '199 kr', image: '🦁' },
+let map, circle, markerLayer;
+let pos = [56.1, 10.2];          // fallback: midt i Danmark
+let radius = 50, showAll = false, onlyMissing = false;
+let region = null, query = '';
+let current = null;
 
-  // SJÆLLAND
-  { id: 'skovtarnet', name: 'Skovtårnet', category: 'Monument', regions: ['Sjælland'], lat: 55.7357, lng: 12.5639, city: 'Rønede', price: 'Gratis', image: '🗼' },
-  { id: 'amalienborg', name: 'Amalienborg', category: 'Slot', regions: ['Sjælland'], lat: 55.6821, lng: 12.5866, city: 'København', price: 'Gratis', image: '🏰' },
-  { id: 'rundetarn', name: 'Rundetårn', category: 'Monument', regions: ['Sjælland'], lat: 55.6797, lng: 12.5743, city: 'København', price: '60 kr', image: '🗼' },
-  { id: 'nyhavn', name: 'Nyhavn', category: 'Bydel', regions: ['Sjælland'], lat: 55.6794, lng: 12.5898, city: 'København', price: 'Gratis', image: '🏘️' },
-  { id: 'de-6-glemte-kaemper', name: 'De 6 Glemte Kaemper', category: 'Kunstværk', regions: ['Sjælland'], lat: 55.6667, lng: 12.4667, city: 'Vestegnen', price: 'Gratis', image: '🗿' },
-  { id: 'tivoli', name: 'Tivoli', category: 'Forlystelse', regions: ['Sjælland'], lat: 55.6733, lng: 12.5673, city: 'København', price: '189 kr', image: '🎪' },
-  { id: 'marmorkirken', name: 'Marmorkirken', category: 'Kirke', regions: ['Sjælland'], lat: 55.6898, lng: 12.5809, city: 'København', price: 'Gratis', image: '⛪' },
-  { id: 'botanisk-have', name: 'Botanisk Have', category: 'Have', regions: ['Sjælland'], lat: 55.7034, lng: 12.5631, city: 'København', price: 'Gratis', image: '🌿' },
-  { id: 'glyptoteket', name: 'Glyptoteket', category: 'Museum', regions: ['Sjælland'], lat: 55.6729, lng: 12.5634, city: 'København', price: '110 kr', image: '🎨' },
-  { id: 'kronborg-slot', name: 'Kronborg Slot', category: 'Slot', regions: ['Sjælland'], lat: 56.0412, lng: 12.6278, city: 'Helsingør', price: '120 kr', image: '🏰' },
-  { id: 'frederiksborg-slot', name: 'Frederiksborg Slot', category: 'Slot', regions: ['Sjælland'], lat: 55.8836, lng: 12.3156, city: 'Hillerød', price: '200 kr', image: '🏰' },
-  { id: 'vor-frelsers-kirke', name: 'Vor Frelsers Kirke', category: 'Kirke', regions: ['Sjælland'], lat: 55.6879, lng: 12.5870, city: 'København', price: 'Gratis', image: '⛪' },
-  { id: 'stevns-klint', name: 'Stevns Klint', category: 'Natur', regions: ['Sjælland'], lat: 55.3111, lng: 12.3950, city: 'Stevns', price: 'Gratis', image: '⛰️' },
-  { id: 'nationalmuseet', name: 'Nationalmuseet', category: 'Museum', regions: ['Sjælland'], lat: 55.6728, lng: 12.5717, city: 'København', price: 'Gratis', image: '🏛️' },
-  { id: 'rosenberg-slot', name: 'Rosenberg Slot', category: 'Slot', regions: ['Sjælland'], lat: 55.6827, lng: 12.5811, city: 'København', price: '150 kr', image: '🏰' },
-  { id: 'den-lille-havfrue', name: 'Den Lille Havfrue', category: 'Statue', regions: ['Sjælland'], lat: 55.6805, lng: 12.5986, city: 'København', price: 'Gratis', image: '🧜' },
-  { id: 'frederiksberg-slot', name: 'Frederiksberg Slot', category: 'Slot', regions: ['Sjælland'], lat: 55.6831, lng: 12.4894, city: 'København', price: 'Gratis', image: '🏰' },
-  { id: 'nyboder', name: 'Nyboder', category: 'Bydel', regions: ['Sjælland'], lat: 55.6917, lng: 12.5700, city: 'København', price: 'Gratis', image: '🏘️' },
-  { id: 'skjoldungernes-land', name: 'Skjoldungernes Land', category: 'Museum', regions: ['Sjælland'], lat: 55.5481, lng: 12.0856, city: 'Roskilde Fjord', price: '95 kr', image: '🏛️' },
-  { id: 'bakken', name: 'Bakken', category: 'Forlystelse', regions: ['Sjælland'], lat: 55.7753, lng: 12.5842, city: 'Klampenborg', price: 'Gratis', image: '🎡' },
-  { id: 'faxe-kalkbrud', name: 'Faxe Kalkbrud', category: 'Museum', regions: ['Sjælland'], lat: 55.2722, lng: 12.2861, city: 'Faxe', price: '110 kr', image: '⛰️' },
-  { id: 'det-kongelige-teater', name: 'Det Kongelige Teater', category: 'Museum', regions: ['Sjælland'], lat: 55.6786, lng: 12.5819, city: 'København', price: '150 kr', image: '🎭' },
-  { id: 'grundtvigs-kirke', name: 'Grundtvigs Kirke', category: 'Kirke', regions: ['Sjælland'], lat: 55.7311, lng: 12.4758, city: 'København', price: 'Gratis', image: '⛪' },
-  { id: 'rosneas-fyr', name: 'Rosnæs Fyr', category: 'Monument', regions: ['Sjælland'], lat: 55.5347, lng: 11.6278, city: 'Kalundborg', price: 'Gratis', image: '🗼' },
-  { id: 'museet-for-sofart', name: 'Museet for Sofart', category: 'Museum', regions: ['Sjælland'], lat: 56.0381, lng: 12.6208, city: 'Helsingør', price: '150 kr', image: '⛵' },
-  { id: 'tystrup-bavelse', name: 'Tystrup-Bavelse', category: 'Natur', regions: ['Sjælland'], lat: 55.4833, lng: 11.7333, city: 'Tystrup', price: 'Gratis', image: '🏞️' },
-  { id: 'vikingeskibsmuseet', name: 'Vikingeskibsmuseet', category: 'Museum', regions: ['Sjælland'], lat: 55.6442, lng: 12.0969, city: 'Roskilde', price: '150 kr', image: '🚢' },
-  { id: 'arken-museum', name: 'Arken Museum', category: 'Museum', regions: ['Sjælland'], lat: 55.6122, lng: 12.4381, city: 'Ishøj', price: '100 kr', image: '🎨' },
-  { id: 'kastellet', name: 'Kastellet', category: 'Slot', regions: ['Sjælland'], lat: 55.6917, lng: 12.5700, city: 'København', price: 'Gratis', image: '🏰' },
+/* ---------- hjælpere ---------- */
+const dist = (a,b,c,d) => {
+  const R=6371, dLa=(c-a)*Math.PI/180, dLo=(d-b)*Math.PI/180;
+  const x = Math.sin(dLa/2)**2 + Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLo/2)**2;
+  return R*2*Math.asin(Math.sqrt(x));
+};
+const visited = id => !!localStorage.getItem('v_'+id);
+const geoOk   = id => !!localStorage.getItem('g_'+id);
+const photos  = id => JSON.parse(localStorage.getItem('p_'+id) || '[]');
+const color   = c => CAT_COLOR[c] || '#4DADE5';
 
-  // ØERNE
-  { id: 'mons-klint', name: "Møn's Klint", category: 'Natur', regions: ['Øerne'], lat: 54.9379, lng: 12.4517, city: 'Borre, Møn', price: 'Gratis', image: '⛰️' },
-  { id: 'christiansborg-slot', name: 'Christiansborg Slot', category: 'Slot', regions: ['Øerne'], lat: 55.6740, lng: 12.5778, city: 'København', price: '200 kr', image: '🏰' },
-  { id: 'eklodalen', name: 'Eklødalen', category: 'Natur', regions: ['Øerne'], lat: 55.2245, lng: 14.9389, city: 'Almindingen, Bornholm', price: 'Gratis', image: '🏞️' },
-  { id: 'dodekalitten', name: 'Dodekalitten', category: 'Kunstværk', regions: ['Øerne'], lat: 55.1190, lng: 14.9389, city: 'Glentehøj, Lolland', price: 'Gratis', image: '🗿' },
-  { id: 'hammershus', name: 'Hammershus', category: 'Slot', regions: ['Øerne'], lat: 55.2265, lng: 14.8083, city: 'Allinge Bornholm', price: 'Gratis', image: '🏰' },
-  { id: 'vallekilde', name: 'Vallekilde', category: 'Bydel', regions: ['Øerne'], lat: 54.8832, lng: 11.7872, city: 'Vallekilde, Svendborg', price: 'Gratis', image: '🏘️' },
-  { id: 'osterlars-rundkirke', name: "Østerlars Rundkirke", category: 'Kirke', regions: ['Øerne'], lat: 55.1917, lng: 14.9417, city: 'Gudhjem, Bornholm', price: '50 kr', image: '⛪' },
-  { id: 'christania', name: 'Christania', category: 'Bydel', regions: ['Øerne'], lat: 55.6720, lng: 12.6419, city: 'København, Amager', price: 'Gratis', image: '🏘️' },
-  { id: 'ducodde-strand', name: 'Ducodde Strand', category: 'Natur', regions: ['Øerne'], lat: 55.0631, lng: 14.9756, city: 'Nexø, Bornholm', price: 'Gratis', image: '🏖️' },
-  { id: 'valdemars-slot', name: 'Valdemars Slot', category: 'Slot', regions: ['Øerne'], lat: 54.9483, lng: 11.5528, city: 'Svendborg, Tåsinge', price: '150 kr', image: '🏰' },
-  { id: 'opalsoen', name: 'Opalsøen', category: 'Natur', regions: ['Øerne'], lat: 55.1333, lng: 14.9389, city: 'Allinge, Bornholm', price: 'Gratis', image: '💎' },
-  { id: 'anholt-fyr', name: 'Anholt Fyr', category: 'Monument', regions: ['Øerne'], lat: 56.7239, lng: 11.5089, city: 'Ørkenen, Anholt', price: 'Gratis', image: '🗼' },
-  { id: 'maribo-domkirke', name: 'Maribo Domkirke', category: 'Kirke', regions: ['Øerne'], lat: 54.7753, lng: 11.5156, city: 'Maribo, Lolland', price: '50 kr', image: '⛪' },
-  { id: 'helligdomsklipperne', name: 'Helligdomsklipperne', category: 'Natur', regions: ['Øerne'], lat: 55.1917, lng: 14.9417, city: 'Gudhjem, Bornholm', price: 'Gratis', image: '⛰️' },
-  { id: 'bispechuen', name: 'Bispechuen', category: 'Natur', regions: ['Øerne'], lat: 56.3186, lng: 8.8408, city: 'Stendalgraven, Fur', price: 'Gratis', image: '⛰️' },
-  { id: 'gedser-odde', name: 'Gedser Odde', category: 'Natur', regions: ['Øerne'], lat: 54.5669, lng: 11.9386, city: 'Gedser, Falster', price: 'Gratis', image: '🏖️' }
-];
+/* ---------- Wikipedia-foto med lokal cache ---------- */
+const imgCache = {};
+async function fetchPhoto(att){
+  if (!att.wiki) return null;
+  const key = 'w_' + att.id;
+  const hit = localStorage.getItem(key);
+  if (hit) return hit === 'none' ? null : hit;
+  try{
+    const url = 'https://da.wikipedia.org/w/api.php?action=query&format=json&origin=*'
+      + '&prop=pageimages&pithumbsize=500&titles=' + encodeURIComponent(att.wiki);
+    const r = await fetch(url);
+    const j = await r.json();
+    const pages = j.query.pages;
+    const p = pages[Object.keys(pages)[0]];
+    const src = p && p.thumbnail && p.thumbnail.source;
+    localStorage.setItem(key, src || 'none');
+    return src || null;
+  }catch(e){ return null; }
+}
+function mountPhoto(att, el){
+  if (imgCache[att.id] === 'none') return;
+  fetchPhoto(att).then(src => {
+    if (!src){ imgCache[att.id]='none'; return; }
+    imgCache[att.id] = src;
+    const im = new Image();
+    im.onload = () => { el.innerHTML=''; el.appendChild(im); };
+    im.src = src; im.alt = att.name;
+  });
+}
 
-const REGIONS = ['Jylland', 'Fyn', 'Sjælland', 'Øerne'];
+/* ---------- kort ---------- */
+function initMap(){
+  map = L.map('map',{zoomControl:true, attributionControl:true}).setView(pos, 8);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,
+    attribution:'© OpenStreetMap'}).addTo(map);
+  markerLayer = L.layerGroup().addTo(map);
+}
+function drawMap(list){
+  markerLayer.clearLayers();
+  if (circle){ map.removeLayer(circle); circle = null; }
 
-let map, currentAttractionId = null;
-let userLocation = [56.2639, 9.5018];
-let filteredAttractions = [...ATTRACTIONS];
-let selectedRegion = null;
-let radiusKm = 50;
-let showAll = false;
-
-window.addEventListener('DOMContentLoaded', () => {
-  initMap();
-  initUI();
-  renderAttractions();
-  
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        userLocation = [pos.coords.latitude, pos.coords.longitude];
-        updateMap();
-        renderAttractions();
-      }
-    );
+  if (!showAll){
+    circle = L.circle(pos,{radius:radius*1000,color:'#4DADE5',weight:1,
+      opacity:.45,fillOpacity:.05,dashArray:'5,6'}).addTo(map);
   }
-});
+  L.circleMarker(pos,{radius:7,color:'#fff',weight:2,
+    fillColor:'#111',fillOpacity:1}).addTo(markerLayer);
 
-function initMap() {
-  map = L.map('map').setView(userLocation, 7);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap',
-    maxZoom: 19
-  }).addTo(map);
+  const pts = [];
+  list.forEach(a => {
+    const done = geoOk(a.id), seen = visited(a.id);
+    const bg = done ? '#3BD37F' : seen ? '#F2B740' : color(a.cat);
+    L.marker([a.lat,a.lng],{icon:L.divIcon({
+      className:'',iconSize:[18,18],iconAnchor:[9,9],
+      html:`<div style="width:18px;height:18px;border-radius:50%;background:${bg};
+        border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)"></div>`
+    })}).addTo(markerLayer).on('click',()=>openDetail(a.id));
+    pts.push([a.lat,a.lng]);
+  });
+
+  if (showAll && pts.length) map.fitBounds(L.latLngBounds(pts),{padding:[30,30]});
 }
 
-function updateMap() {
-  map.eachLayer(layer => {
-    if (layer instanceof L.Marker || layer instanceof L.Circle) {
-      map.removeLayer(layer);
-    }
-  });
-
-  if (!showAll) {
-    L.circle(userLocation, {
-      radius: radiusKm * 1000,
-      color: '#4DADE5',
-      weight: 1,
-      opacity: 0.3,
-      fillOpacity: 0.05
-    }).addTo(map);
-  }
-
-  const shown = [];
-
-  filteredAttractions.forEach(att => {
-    const dist = haversine(userLocation[0], userLocation[1], att.lat, att.lng);
-    
-    if (showAll || dist <= radiusKm) {
-      const isVisited = localStorage.getItem(`visited_${att.id}`);
-      const hasGeoPhoto = localStorage.getItem(`geo_locked_${att.id}`);
-      
-      L.marker([att.lat, att.lng], {
-        icon: L.divIcon({
-          html: `<div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: ${hasGeoPhoto ? '#3BD37F' : isVisited ? '#F2B740' : '#4DADE5'}; border-radius: 50%; border: 3px solid white; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.3);">${att.image}</div>`,
-          iconSize: [40, 40],
-          iconAnchor: [20, 20]
-        })
-      }).addTo(map).on('click', () => openModal(att.id));
-
-      shown.push([att.lat, att.lng]);
-    }
-  });
-
-  if (showAll && shown.length > 0) {
-    map.fitBounds(L.latLngBounds(shown), { padding: [40, 40] });
-  }
+/* ---------- filtrering ---------- */
+function currentList(){
+  return ATTRACTIONS
+    .filter(a => !region || a.reg.includes(region))
+    .filter(a => !onlyMissing || !(visited(a.id) || geoOk(a.id)))
+    .filter(a => {
+      if (!query) return true;
+      const q = query.toLowerCase();
+      return a.name.toLowerCase().includes(q) || a.city.toLowerCase().includes(q);
+    })
+    .filter(a => showAll || dist(pos[0],pos[1],a.lat,a.lng) <= radius)
+    .sort((a,b) => dist(pos[0],pos[1],a.lat,a.lng) - dist(pos[0],pos[1],b.lat,b.lng));
 }
 
-function initUI() {
-  const regionTabs = document.getElementById('regionTabs');
-  REGIONS.forEach(region => {
-    const count = ATTRACTIONS.filter(a => a.regions.includes(region)).length;
-    const visited = ATTRACTIONS.filter(a => a.regions.includes(region) && localStorage.getItem(`visited_${a.id}`)).length;
-    
-    const btn = document.createElement('button');
-    btn.className = 'region-tab';
-    btn.innerHTML = `${region}<span class="count">${visited}/${count}</span>`;
-    btn.onclick = () => filterByRegion(region, btn);
-    regionTabs.appendChild(btn);
-  });
+/* ---------- liste ---------- */
+function render(){
+  const list = currentList();
+  drawMap(list);
 
-  document.getElementById('searchInput').addEventListener('input', () => applyFilters());
+  document.getElementById('listCount').textContent =
+    list.length + (showAll ? ' i alt' : ' · ' + radius + ' km');
 
-  document.getElementById('radiusSlider').addEventListener('input', e => {
-    radiusKm = parseInt(e.target.value);
-    document.getElementById('radiusOutput').textContent = radiusKm + ' km';
-    if (showAll) {
-      showAll = false;
-      document.getElementById('showAllBtn').classList.remove('active');
-      document.getElementById('showAllBtn').textContent = '🌍 Vis alle på kortet';
-      document.getElementById('radiusSlider').disabled = false;
-    }
-    updateMap();
-    renderAttractions();
-  });
+  const total = ATTRACTIONS.length;
+  const done  = ATTRACTIONS.filter(a => visited(a.id) || geoOk(a.id)).length;
+  document.getElementById('progress').textContent = done + ' af ' + total + ' besøgt';
 
-  document.getElementById('showAllBtn').addEventListener('click', () => {
-    showAll = !showAll;
-    const btn = document.getElementById('showAllBtn');
-    btn.classList.toggle('active', showAll);
-    btn.textContent = showAll ? '📍 Tilbage til radius' : '🌍 Vis alle på kortet';
-    document.getElementById('radiusSlider').disabled = showAll;
-    updateMap();
-    renderAttractions();
-    if (!showAll) {
-      map.setView(userLocation, 8);
-    }
-  });
-
-  document.getElementById('photoUpload').addEventListener('click', () => {
-    document.getElementById('cameraInput').click();
-  });
-
-  document.getElementById('cameraInput').addEventListener('change', e => {
-    handlePhotoUpload(e);
-  });
-}
-
-function filterByRegion(region, btn) {
-  document.querySelectorAll('.region-tab').forEach(b => b.classList.remove('active'));
-  
-  if (selectedRegion === region) {
-    selectedRegion = null;
-  } else {
-    selectedRegion = region;
-    btn.classList.add('active');
-  }
-  
-  applyFilters();
-}
-
-function applyFilters() {
-  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-  
-  filteredAttractions = ATTRACTIONS.filter(att => {
-    const matchSearch = !searchTerm || att.name.toLowerCase().includes(searchTerm) || att.city.toLowerCase().includes(searchTerm);
-    const matchRegion = !selectedRegion || att.regions.includes(selectedRegion);
-    
-    return matchSearch && matchRegion;
-  });
-  
-  renderAttractions();
-  updateMap();
-}
-
-function renderAttractions() {
-  const list = document.getElementById('attractionList');
-  
-  const sortedAtts = [...filteredAttractions].sort((a, b) => {
-    const distA = haversine(userLocation[0], userLocation[1], a.lat, a.lng);
-    const distB = haversine(userLocation[0], userLocation[1], b.lat, b.lng);
-    return distA - distB;
-  });
-  
-  const inRadius = sortedAtts.filter(att => {
-    if (showAll) return true;
-    const dist = haversine(userLocation[0], userLocation[1], att.lat, att.lng);
-    return dist <= radiusKm;
-  });
-  
-  if (inRadius.length === 0) {
-    list.innerHTML = '<div class="empty-state">Ingen attraktioner inden for radius. Prøv en større radius eller "Vis alle".</div>';
+  const box = document.getElementById('list');
+  if (!list.length){
+    box.innerHTML = '<div class="empty">Ingen attraktioner her.<br>'
+      + 'Prøv en større radius, eller tryk 🌍 for at se alle.</div>';
     return;
   }
-  
-  list.innerHTML = inRadius.map(att => {
-    const isVisited = localStorage.getItem(`visited_${att.id}`);
-    const hasGeoPhoto = localStorage.getItem(`geo_locked_${att.id}`);
-    const dist = haversine(userLocation[0], userLocation[1], att.lat, att.lng);
-    
-    return `
-      <div class="attraction-item" onclick="openModal('${att.id}')" style="position: relative;">
-        <div class="att-name">${att.image} ${att.name}</div>
-        <div class="att-meta">
-          <span>${att.city}</span>
-          <span>${dist.toFixed(1)} km</span>
-        </div>
-        ${hasGeoPhoto ? '<div style="position: absolute; top: 8px; left: 8px; background: var(--success); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">🔒 Geo-låst</div>' : ''}
-        ${isVisited && !hasGeoPhoto ? '<div class="att-check">✓</div>' : ''}
+
+  box.innerHTML = '';
+  list.forEach(a => {
+    const d = dist(pos[0],pos[1],a.lat,a.lng);
+    const done = geoOk(a.id), seen = visited(a.id);
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.onclick = () => openDetail(a.id);
+    card.innerHTML = `
+      <div class="thumb">
+        <span class="ph">${a.cat.slice(0,4).toUpperCase()}</span>
+        ${done||seen ? '<span class="badge-ok">✓</span>' : ''}
       </div>
-    `;
-  }).join('');
+      <div class="cardbody">
+        <div class="nm">${a.name}</div>
+        <div class="mt">${a.city}</div>
+        <div class="tags">
+          <span class="tag">${a.cat}</span>
+          <span class="tag ${a.price==='Gratis'?'free':''}">${a.price}</span>
+        </div>
+      </div>
+      <div class="carddist">${d < 10 ? d.toFixed(1) : Math.round(d)} km</div>`;
+    box.appendChild(card);
+    mountPhoto(a, card.querySelector('.thumb'));
+  });
 }
 
-function openModal(id) {
-  currentAttractionId = id;
-  const att = ATTRACTIONS.find(a => a.id === id);
-  
-  document.getElementById('modalTitle').textContent = att.name;
-  
-  const dist = haversine(userLocation[0], userLocation[1], att.lat, att.lng);
-  document.getElementById('modalCity').textContent = att.city;
-  document.getElementById('modalRegion').textContent = att.regions.join(' / ');
-  document.getElementById('modalDistance').textContent = dist.toFixed(1) + ' km';
-  document.getElementById('modalCategory').textContent = att.category;
-  
-  document.getElementById('modalImage').src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'><rect fill='%23153252' width='400' height='200'/><text x='200' y='100' font-size='100' text-anchor='middle' dominant-baseline='central'>${att.image}</text></svg>`;
-  
-  document.getElementById('routeBtn').onclick = () => {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${att.lat},${att.lng}&origin=${userLocation[0]},${userLocation[1]}`;
-    window.open(url, '_blank');
-  };
-  
-  renderPhotos();
-  document.getElementById('modal').classList.add('show');
-}
+/* ---------- detaljeark ---------- */
+function openDetail(id){
+  const a = ATTRACTIONS.find(x => x.id === id);
+  current = a;
 
-function closeModal() {
-  document.getElementById('modal').classList.remove('show');
-  currentAttractionId = null;
-}
+  document.getElementById('dName').textContent = a.name;
+  document.getElementById('dChips').innerHTML =
+    `<span class="chip">${a.cat}</span>` + a.reg.map(r=>`<span class="chip">${r}</span>`).join('');
+  document.getElementById('dCity').textContent  = a.city;
+  document.getElementById('dDist').textContent  = dist(pos[0],pos[1],a.lat,a.lng).toFixed(1) + ' km';
+  document.getElementById('dPrice').textContent = a.price;
+  document.getElementById('dReg').textContent   = a.reg.join(' / ');
 
-async function handlePhotoUpload(e) {
-  const file = e.target.files[0];
-  if (!file || !currentAttractionId) return;
-  
-  const att = ATTRACTIONS.find(a => a.id === currentAttractionId);
-  
-  try {
-    const exif = await exifr.parse(file);
-    const photoLat = exif?.latitude;
-    const photoLng = exif?.longitude;
-    
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const photo = {
-        data: evt.target.result,
-        date: new Date().toLocaleDateString('da-DK'),
-        lat: photoLat,
-        lng: photoLng,
-        geoLocked: false
-      };
-      
-      if (photoLat && photoLng) {
-        const dist = haversine(att.lat, att.lng, photoLat, photoLng);
-        if (dist <= 0.1) {
-          photo.geoLocked = true;
-          localStorage.setItem(`geo_locked_${currentAttractionId}`, 'true');
-        }
-      }
-      
-      const photos = JSON.parse(localStorage.getItem(`photos_${currentAttractionId}`) || '[]');
-      photos.push(photo);
-      localStorage.setItem(`photos_${currentAttractionId}`, JSON.stringify(photos));
-      
-      renderPhotos();
-      renderAttractions();
-      updateMap();
-    };
-    reader.readAsDataURL(file);
-  } catch (err) {
-    alert('⚠️ Ingen GPS-data i billedet.');
+  const hero = document.getElementById('dHero');
+  hero.removeAttribute('src');
+  fetchPhoto(a).then(src => { if (src && current === a) hero.src = src; });
+
+  document.getElementById('dRoute').href =
+    `https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}`;
+
+  const w = document.getElementById('dWeb');
+  if (a.web){ w.href = a.web; w.removeAttribute('disabled'); w.textContent = '🌐 Hjemmeside'; }
+  else {
+    w.href = 'https://www.google.com/search?q=' + encodeURIComponent(a.name + ' ' + a.city);
+    w.textContent = '🔎 Søg info';
   }
-  
+
+  document.getElementById('dVisit').textContent =
+    visited(a.id) ? '✓ Besøgt — fjern markering' : 'Markér som besøgt';
+
+  drawGallery();
+  openSheet('detSheet');
+}
+
+function drawGallery(){
+  const a = current, g = document.getElementById('dGallery');
+  const ps = photos(a.id);
+  g.innerHTML = ps.map((p,i) =>
+    `<div><img src="${p.data}" onclick="delPhoto(${i})">
+     <div class="lock">${p.geo ? '🔒 bekræftet' : p.date}</div></div>`).join('');
+  document.getElementById('dGeoNote').textContent = geoOk(a.id)
+    ? '🔒 Bekræftet på stedet — dit foto blev taget inden for 150 m.'
+    : 'Tag et foto mens du står der, så låser appen den automatisk som besøgt.';
+}
+function delPhoto(i){
+  const ps = photos(current.id); ps.splice(i,1);
+  localStorage.setItem('p_'+current.id, JSON.stringify(ps));
+  if (!ps.some(p=>p.geo)) localStorage.removeItem('g_'+current.id);
+  drawGallery(); render();
+}
+
+/* ---------- foto med positionsbekræftelse ---------- */
+async function handlePhoto(e){
+  const f = e.target.files[0]; if (!f || !current) return;
+  const a = current;
+
+  // prøv EXIF først, ellers brug enhedens position lige nu
+  let plat = null, plng = null;
+  try{
+    const ex = await exifr.parse(f);
+    if (ex && ex.latitude){ plat = ex.latitude; plng = ex.longitude; }
+  }catch(_){}
+
+  if (plat === null){
+    plat = pos[0]; plng = pos[1];   // seneste kendte position
+  }
+
+  const rd = new FileReader();
+  rd.onload = ev => {
+    const d = dist(a.lat, a.lng, plat, plng);
+    const ok = d <= 0.15;                       // 150 m
+    const ps = photos(a.id);
+    ps.push({data:ev.target.result, date:new Date().toLocaleDateString('da-DK'), geo:ok});
+    localStorage.setItem('p_'+a.id, JSON.stringify(ps));
+    if (ok){
+      localStorage.setItem('g_'+a.id,'1');
+      localStorage.setItem('v_'+a.id,'1');
+    }
+    drawGallery(); render(); buildRegions(); buildStats();
+    if (!ok) alert('Fotoet er gemt, men din position er ' + d.toFixed(1)
+      + ' km fra ' + a.name + ' — så den er ikke låst som bekræftet endnu.');
+  };
+  rd.readAsDataURL(f);
   e.target.value = '';
 }
 
-function renderPhotos() {
-  const gallery = document.getElementById('photoGallery');
-  const photos = JSON.parse(localStorage.getItem(`photos_${currentAttractionId}`) || '[]');
-  
-  gallery.innerHTML = photos.map((photo, idx) => `
-    <div class="photo-item">
-      <img src="${photo.data}" alt="Foto ${idx + 1}" style="cursor: pointer;" onclick="deletePhoto(${idx})">
-    </div>
-  `).join('');
+/* ---------- indstillinger ---------- */
+function buildRegions(){
+  const box = document.getElementById('regions');
+  box.innerHTML = '';
+  REGIONS.forEach(r => {
+    const tot = ATTRACTIONS.filter(a => a.reg.includes(r)).length;
+    const dn  = ATTRACTIONS.filter(a => a.reg.includes(r) && (visited(a.id)||geoOk(a.id))).length;
+    const b = document.createElement('button');
+    b.className = 'regbtn' + (region === r ? ' on' : '');
+    b.innerHTML = r + '<small>' + dn + ' / ' + tot + '</small>';
+    b.onclick = () => {
+      region = (region === r) ? null : r;
+      buildRegions(); render();
+    };
+    box.appendChild(b);
+  });
+}
+function buildStats(){
+  const tot = ATTRACTIONS.length;
+  const dn  = ATTRACTIONS.filter(a => visited(a.id)||geoOk(a.id)).length;
+  const lk  = ATTRACTIONS.filter(a => geoOk(a.id)).length;
+  document.getElementById('statFacts').innerHTML =
+    `<div class="fact"><div class="k">Besøgt</div><div class="v">${dn} / ${tot}</div></div>
+     <div class="fact"><div class="k">Bekræftet med foto</div><div class="v">${lk}</div></div>`;
 }
 
-function deletePhoto(idx) {
-  const photos = JSON.parse(localStorage.getItem(`photos_${currentAttractionId}`) || '[]');
-  photos.splice(idx, 1);
-  localStorage.setItem(`photos_${currentAttractionId}`, JSON.stringify(photos));
-  renderPhotos();
-}
+/* ---------- ark åbn/luk ---------- */
+function openSheet(id){ document.getElementById(id).classList.add('open'); }
+function closeSheet(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('[data-close]').forEach(b =>
+  b.onclick = () => closeSheet(b.dataset.close));
+document.querySelectorAll('.sheet').forEach(s =>
+  s.onclick = e => { if (e.target === s) closeSheet(s.id); });
 
-function haversine(lat1, lng1, lat2, lng2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  return R * 2 * Math.asin(Math.sqrt(a));
-}
+/* ---------- events ---------- */
+document.getElementById('radius').oninput = e => {
+  radius = +e.target.value;
+  document.getElementById('radiusOut').textContent = radius + ' km';
+  if (showAll){
+    showAll = false;
+    document.getElementById('allBtn').classList.remove('on');
+  }
+  render();
+};
+document.getElementById('allBtn').onclick = function(){
+  showAll = !showAll;
+  this.classList.toggle('on', showAll);
+  render();
+  if (!showAll) map.setView(pos, 9);
+};
+document.getElementById('setBtn').onclick = () => {
+  buildRegions(); buildStats(); openSheet('setSheet');
+};
+document.getElementById('clearReg').onclick = () => {
+  region = null; buildRegions(); render();
+};
+document.getElementById('onlyMissing').onclick = function(){
+  onlyMissing = !onlyMissing;
+  this.classList.toggle('on', onlyMissing);
+  this.textContent = onlyMissing ? '✓ Viser kun dem jeg mangler' : 'Vis kun dem jeg mangler';
+  render();
+};
+document.getElementById('search').oninput = e => { query = e.target.value; render(); };
+document.getElementById('dDrop').onclick = () => document.getElementById('camInput').click();
+document.getElementById('camInput').onchange = handlePhoto;
+document.getElementById('dVisit').onclick = () => {
+  const id = current.id;
+  if (visited(id)){ localStorage.removeItem('v_'+id); localStorage.removeItem('g_'+id); }
+  else localStorage.setItem('v_'+id,'1');
+  document.getElementById('dVisit').textContent =
+    visited(id) ? '✓ Besøgt — fjern markering' : 'Markér som besøgt';
+  render(); drawGallery();
+};
 
-function showStats() {
-  const total = ATTRACTIONS.length;
-  const visited = ATTRACTIONS.filter(a => localStorage.getItem(`visited_${a.id}`)).length;
-  const geoLocked = ATTRACTIONS.filter(a => localStorage.getItem(`geo_locked_${a.id}`)).length;
-  
-  alert(`📊 Din progress
+/* ---------- start ---------- */
+initMap();
+render();
+buildRegions();
+buildStats();
 
-Total besøgt: ${visited}/${total}
-🔒 Geo-låst: ${geoLocked}
-
-${REGIONS.map(r => {
-    const rTotal = ATTRACTIONS.filter(a => a.regions.includes(r)).length;
-    const rVisited = ATTRACTIONS.filter(a => a.regions.includes(r) && localStorage.getItem(`visited_${a.id}`)).length;
-    return `${r}: ${rVisited}/${rTotal}`;
-  }).join('\n')}`);
+if (navigator.geolocation){
+  navigator.geolocation.watchPosition(p => {
+    pos = [p.coords.latitude, p.coords.longitude];
+    if (!showAll) map.setView(pos, 9);
+    render();
+  }, () => {}, {enableHighAccuracy:true, maximumAge:30000, timeout:15000});
 }
 </script>
-
 </body>
 </html>
